@@ -80,15 +80,7 @@ void test_parseCommandLine_fullargs(CuTest* tc)
 	CuAssertIntEquals_Msg(tc, "Fail to parse -t argument", 1, cmdData->runUnityTest);
 	CuAssertIntEquals_Msg(tc, "Fail to parse -t argument", 0, cmdData->exitAfterTests);
 
-	// TODO: Implement other test case scenarios?
 }
-
-
-
-
-
-
-
 
 /**
  * Export function to aggregate all tests. This function must be 
