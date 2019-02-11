@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{EABB15FC-2DCE-4678-B4A0-C14A14F6FB86}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>tbamud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NMakeOutput>tbamud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>tbamud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeOutput>tbamud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.comm.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.informative.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.item.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.movement.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.offensive.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.other.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.social.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\act.wizard.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\aedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\asciimap.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\ban.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\boards.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\bsd-snprintf.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\castle.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\cedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\class.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\comm.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\config.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\constants.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\db.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_comm.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_db_scripts.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_event.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_handler.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_misc.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_mobcmd.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_objcmd.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_olc.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_scripts.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_triggers.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_variables.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\dg_wldcmd.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\fight.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\genmob.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\genobj.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\genolc.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\genqst.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\genshp.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\genwld.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\genzon.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\graph.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\handler.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\hedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\house.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\ibt.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\improved-edit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\interpreter.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\limits.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\lists.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\magic.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\mail.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\medit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\mobact.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\modify.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\msgedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\mud_event.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\oasis.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\oasis_copy.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\oasis_delete.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\oasis_list.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\objsave.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\oedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\players.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\prefedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\protocol.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\qedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\quest.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\random.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\redit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\sedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\shop.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\spec_assign.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\spec_procs.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\spells.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\spell_parser.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\tedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\utils.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\weather.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\zedit.c" />
+    <ClCompile Include="F:\GIT_REPOS\MUD\src\zmalloc.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\act.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\asciimap.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\ban.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\boards.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\bsd-snprintf.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\class.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\comm.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\config.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\constants.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\db.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\dg_event.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\dg_olc.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\dg_scripts.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\fight.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\genmob.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\genobj.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\genolc.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\genshp.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\genwld.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\genzon.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\graph.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\handler.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\hedit.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\house.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\ibt.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\improved-edit.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\interpreter.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\lists.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\mail.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\modify.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\msgedit.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\mud_event.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\oasis.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\pfdefaults.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\prefedit.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\protocol.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\quest.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\screen.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\shop.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\spec_procs.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\spells.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\structs.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\sysdep.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\telnet.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\utils.h" />
+    <ClInclude Include="F:\GIT_REPOS\MUD\src\zmalloc.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

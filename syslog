@@ -1,0 +1,63 @@
+Feb 10 15:33:15 2019 :: Configuration loaded.
+Feb 10 15:33:15 2019 :: tbaMUD 2018.1
+Feb 10 15:33:15 2019 :: Using lib as data directory.
+Feb 10 15:33:15 2019 :: Running game on port 4000.
+Feb 10 15:33:15 2019 :: Finding player limit.
+Feb 10 15:33:19 2019 :: Opening mother connection.
+Feb 10 15:33:19 2019 :: Max players set to 300
+Feb 10 15:33:19 2019 :: Binding to all IP interfaces on this host.
+Feb 10 15:33:19 2019 :: Boot db -- BEGIN.
+Feb 10 15:33:19 2019 :: Resetting the game time:
+Feb 10 15:33:19 2019 :: No time file 'etc/time' starting from the beginning.
+Feb 10 15:33:19 2019 ::    Current Gametime: 22H 17D 14M 839Y.
+Feb 10 15:33:19 2019 :: Initialize Global Lists
+Feb 10 15:33:19 2019 :: Initializing Events
+Feb 10 15:33:19 2019 :: Reading news, credits, help, ihelp, bground, info & motds.
+Feb 10 15:33:19 2019 :: Loading spell definitions.
+Feb 10 15:33:19 2019 :: Loading zone table.
+Feb 10 15:33:19 2019 ::    3 zones, 168 bytes.
+Feb 10 15:33:19 2019 :: Loading triggers and generating index.
+Feb 10 15:33:19 2019 :: Loading rooms.
+Feb 10 15:33:19 2019 ::    110 rooms, 11440 bytes.
+Feb 10 15:33:19 2019 :: Renumbering rooms.
+Feb 10 15:33:19 2019 :: Checking start rooms.
+Feb 10 15:33:19 2019 :: Loading mobs and generating index.
+Feb 10 15:33:19 2019 ::    100 mobs, 2000 bytes in index, 38400 bytes in prototypes.
+Feb 10 15:33:19 2019 :: Loading objs and generating index.
+Feb 10 15:33:19 2019 ::    182 objs, 3640 bytes in index, 31304 bytes in prototypes.
+Feb 10 15:33:20 2019 :: Renumbering zone table.
+Feb 10 15:33:20 2019 :: Loading shops.
+Feb 10 15:33:20 2019 :: Loading quests.
+Feb 10 15:33:20 2019 :: SYSERR: File 'world/qst/0.qst' listed in 'world/qst//index.mini': No such file or directory
+Feb 10 15:33:20 2019 :: Loading help entries.
+Feb 10 15:33:20 2019 ::    2648 entries, 52960 bytes.
+Feb 10 15:33:20 2019 :: Generating player index.
+Feb 10 15:33:20 2019 :: Loading fight messages.
+Feb 10 15:33:20 2019 :: Loaded 37 Combat Messages...
+Feb 10 15:33:20 2019 :: Loading social messages.
+Feb 10 15:33:20 2019 :: Social table contains 489 socials.
+Feb 10 15:33:20 2019 :: Building command list.
+Feb 10 15:33:20 2019 :: Command info rebuilt, 765 total commands.
+Feb 10 15:33:20 2019 :: Assigning function pointers:
+Feb 10 15:33:20 2019 ::    Mobiles.
+Feb 10 15:33:20 2019 ::    Shopkeepers.
+Feb 10 15:33:20 2019 ::    Objects.
+Feb 10 15:33:20 2019 ::    Rooms.
+Feb 10 15:33:20 2019 ::    Questmasters.
+Feb 10 15:33:20 2019 :: Assigning spell and skill levels.
+Feb 10 15:33:20 2019 :: Sorting command list and spells.
+Feb 10 15:33:20 2019 :: Booting mail system.
+Feb 10 15:33:20 2019 ::    Mail file read -- 0 messages.
+Feb 10 15:33:20 2019 :: Reading banned site and invalid-name list.
+Feb 10 15:33:20 2019 :: Loading Ideas.
+Feb 10 15:33:20 2019 :: Loading Bugs.
+Feb 10 15:33:20 2019 :: Loading Typos.
+Feb 10 15:33:20 2019 :: Deleting timed-out crash and rent files:
+Feb 10 15:33:20 2019 ::    Done.
+Feb 10 15:33:20 2019 :: Cleaning up last log.
+Feb 10 15:33:20 2019 :: Resetting #0: The Builder Academy Zone (rooms 0-99).
+Feb 10 15:33:20 2019 :: Resetting #12: God Complex Merged with 343 (rooms 1200-1299).
+Feb 10 15:33:20 2019 :: Resetting #30: Northern Midgaard (rooms 3000-3099).
+Feb 10 15:33:20 2019 :: Boot db -- DONE.
+Feb 10 15:33:20 2019 :: Entering game loop.
+Feb 10 15:33:20 2019 :: No connections.  Going to sleep.

@@ -1,0 +1,432 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\source">
+      <UniqueIdentifier>{a926f5a8-60a1-42ac-8ec4-b5f800741eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\testes">
+      <UniqueIdentifier>{8144bf81-4d68-4ac7-8557-6157b1e800c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\source">
+      <UniqueIdentifier>{ade9fe4f-472e-4f3e-8d3c-90330f96c08e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\testes">
+      <UniqueIdentifier>{aeed226b-60bb-4fd8-91cb-4bf72bb8c506}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\act.comm.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\act.informative.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\act.item.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\act.movement.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\act.offensive.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\act.other.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\act.social.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\act.wizard.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\aedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\asciimap.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ban.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\boards.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\bsd-snprintf.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\castle.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\class.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\comm.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\config.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\constants.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\db.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_comm.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_db_scripts.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_event.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_handler.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_misc.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_mobcmd.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_objcmd.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_olc.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_scripts.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_triggers.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_variables.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dg_wldcmd.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fight.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\genmob.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\genobj.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\genolc.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\genqst.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\genshp.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\genwld.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\genzon.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graph.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\handler.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\house.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ibt.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\improved-edit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interpreter.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\limits.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lists.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\magic.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mail.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\medit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mobact.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\modify.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\msgedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mud_event.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oasis.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oasis_copy.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oasis_delete.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oasis_list.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\objsave.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\oedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\players.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\prefedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\protocol.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\qedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\quest.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\random.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\redit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shop.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spec_assign.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spec_procs.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spell_parser.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spells.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\weather.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zedit.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\zmalloc.c">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+    <ClCompile Include="test\CuTest.c">
+      <Filter>Source Files\testes</Filter>
+    </ClCompile>
+    <ClCompile Include="test\comm.test.c">
+      <Filter>Source Files\testes</Filter>
+    </ClCompile>
+    <ClCompile Include="test\testrunner.c">
+      <Filter>Source Files\testes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\act.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\asciimap.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ban.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\boards.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\bsd-snprintf.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\class.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comm.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\conf.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\constants.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\db.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dg_event.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dg_olc.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dg_scripts.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fight.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\genmob.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\genobj.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\genolc.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\genshp.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\genwld.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\genzon.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graph.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\handler.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\hedit.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\house.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ibt.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\improved-edit.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interpreter.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lists.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mail.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\modify.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\msgedit.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mud_event.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\oasis.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pfdefaults.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\prefedit.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\protocol.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\quest.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\screen.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shop.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spec_procs.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\spells.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\structs.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sysdep.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\telnet.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\zmalloc.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CuTest.h">
+      <Filter>Header Files\testes</Filter>
+    </ClInclude>
+    <ClInclude Include="test\CuTest.h">
+      <Filter>Header Files\testes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\boot_structure.h">
+      <Filter>Header Files\source</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

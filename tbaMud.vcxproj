@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\act.comm.c" />
+    <ClCompile Include="src\act.informative.c" />
+    <ClCompile Include="src\act.item.c" />
+    <ClCompile Include="src\act.movement.c" />
+    <ClCompile Include="src\act.offensive.c" />
+    <ClCompile Include="src\act.other.c" />
+    <ClCompile Include="src\act.social.c" />
+    <ClCompile Include="src\act.wizard.c" />
+    <ClCompile Include="src\aedit.c" />
+    <ClCompile Include="src\asciimap.c" />
+    <ClCompile Include="src\ban.c" />
+    <ClCompile Include="src\boards.c" />
+    <ClCompile Include="src\bsd-snprintf.c" />
+    <ClCompile Include="src\castle.c" />
+    <ClCompile Include="src\cedit.c" />
+    <ClCompile Include="src\class.c" />
+    <ClCompile Include="src\comm.c" />
+    <ClCompile Include="src\config.c" />
+    <ClCompile Include="src\constants.c" />
+    <ClCompile Include="src\db.c" />
+    <ClCompile Include="src\dg_comm.c" />
+    <ClCompile Include="src\dg_db_scripts.c" />
+    <ClCompile Include="src\dg_event.c" />
+    <ClCompile Include="src\dg_handler.c" />
+    <ClCompile Include="src\dg_misc.c" />
+    <ClCompile Include="src\dg_mobcmd.c" />
+    <ClCompile Include="src\dg_objcmd.c" />
+    <ClCompile Include="src\dg_olc.c" />
+    <ClCompile Include="src\dg_scripts.c" />
+    <ClCompile Include="src\dg_triggers.c" />
+    <ClCompile Include="src\dg_variables.c" />
+    <ClCompile Include="src\dg_wldcmd.c" />
+    <ClCompile Include="src\fight.c" />
+    <ClCompile Include="src\genmob.c" />
+    <ClCompile Include="src\genobj.c" />
+    <ClCompile Include="src\genolc.c" />
+    <ClCompile Include="src\genqst.c" />
+    <ClCompile Include="src\genshp.c" />
+    <ClCompile Include="src\genwld.c" />
+    <ClCompile Include="src\genzon.c" />
+    <ClCompile Include="src\graph.c" />
+    <ClCompile Include="src\handler.c" />
+    <ClCompile Include="src\hedit.c" />
+    <ClCompile Include="src\house.c" />
+    <ClCompile Include="src\ibt.c" />
+    <ClCompile Include="src\improved-edit.c" />
+    <ClCompile Include="src\interpreter.c" />
+    <ClCompile Include="src\limits.c" />
+    <ClCompile Include="src\lists.c" />
+    <ClCompile Include="src\magic.c" />
+    <ClCompile Include="src\mail.c" />
+    <ClCompile Include="src\medit.c" />
+    <ClCompile Include="src\mobact.c" />
+    <ClCompile Include="src\modify.c" />
+    <ClCompile Include="src\msgedit.c" />
+    <ClCompile Include="src\mud_event.c" />
+    <ClCompile Include="src\oasis.c" />
+    <ClCompile Include="src\oasis_copy.c" />
+    <ClCompile Include="src\oasis_delete.c" />
+    <ClCompile Include="src\oasis_list.c" />
+    <ClCompile Include="src\objsave.c" />
+    <ClCompile Include="src\oedit.c" />
+    <ClCompile Include="src\players.c" />
+    <ClCompile Include="src\prefedit.c" />
+    <ClCompile Include="src\protocol.c" />
+    <ClCompile Include="src\qedit.c" />
+    <ClCompile Include="src\quest.c" />
+    <ClCompile Include="src\random.c" />
+    <ClCompile Include="src\redit.c" />
+    <ClCompile Include="src\sedit.c" />
+    <ClCompile Include="src\shop.c" />
+    <ClCompile Include="src\spec_assign.c" />
+    <ClCompile Include="src\spec_procs.c" />
+    <ClCompile Include="src\spells.c" />
+    <ClCompile Include="src\spell_parser.c" />
+    <ClCompile Include="src\tedit.c" />
+    <ClCompile Include="src\utils.c" />
+    <ClCompile Include="src\weather.c" />
+    <ClCompile Include="src\zedit.c" />
+    <ClCompile Include="src\zmalloc.c" />
+    <ClCompile Include="test\comm.test.c" />
+    <ClCompile Include="test\CuTest.c" />
+    <ClCompile Include="test\testrunner.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\act.h" />
+    <ClInclude Include="src\asciimap.h" />
+    <ClInclude Include="src\ban.h" />
+    <ClInclude Include="src\boards.h" />
+    <ClInclude Include="src\boot_structure.h" />
+    <ClInclude Include="src\bsd-snprintf.h" />
+    <ClInclude Include="src\class.h" />
+    <ClInclude Include="src\comm.h" />
+    <ClInclude Include="src\conf.h" />
+    <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\constants.h" />
+    <ClInclude Include="src\CuTest.h" />
+    <ClInclude Include="src\db.h" />
+    <ClInclude Include="src\dg_event.h" />
+    <ClInclude Include="src\dg_olc.h" />
+    <ClInclude Include="src\dg_scripts.h" />
+    <ClInclude Include="src\fight.h" />
+    <ClInclude Include="src\genmob.h" />
+    <ClInclude Include="src\genobj.h" />
+    <ClInclude Include="src\genolc.h" />
+    <ClInclude Include="src\genshp.h" />
+    <ClInclude Include="src\genwld.h" />
+    <ClInclude Include="src\genzon.h" />
+    <ClInclude Include="src\graph.h" />
+    <ClInclude Include="src\handler.h" />
+    <ClInclude Include="src\hedit.h" />
+    <ClInclude Include="src\house.h" />
+    <ClInclude Include="src\ibt.h" />
+    <ClInclude Include="src\improved-edit.h" />
+    <ClInclude Include="src\interpreter.h" />
+    <ClInclude Include="src\lists.h" />
+    <ClInclude Include="src\mail.h" />
+    <ClInclude Include="src\modify.h" />
+    <ClInclude Include="src\msgedit.h" />
+    <ClInclude Include="src\mud_event.h" />
+    <ClInclude Include="src\oasis.h" />
+    <ClInclude Include="src\pfdefaults.h" />
+    <ClInclude Include="src\prefedit.h" />
+    <ClInclude Include="src\protocol.h" />
+    <ClInclude Include="src\quest.h" />
+    <ClInclude Include="src\screen.h" />
+    <ClInclude Include="src\shop.h" />
+    <ClInclude Include="src\spec_procs.h" />
+    <ClInclude Include="src\spells.h" />
+    <ClInclude Include="src\structs.h" />
+    <ClInclude Include="src\sysdep.h" />
+    <ClInclude Include="src\telnet.h" />
+    <ClInclude Include="src\utils.h" />
+    <ClInclude Include="src\zmalloc.h" />
+    <ClInclude Include="test\CuTest.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{F46B7231-E8FC-4381-ABFA-ADDCC5C5E68B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CLRSupport>false</CLRSupport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>tbaMud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <SourcePath>$(VC_SourcePath)\test;$(VC_SourcePath)\src</SourcePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NMakeOutput>tbaMud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>tbaMud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeOutput>tbaMud.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
