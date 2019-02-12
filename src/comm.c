@@ -181,12 +181,11 @@ void gettimeofday(struct timeval *t, struct timezone *dummy)
 #endif	/* CIRCLE_WINDOWS || CIRCLE_MACINTOSH */
 
 
-
 /**
-* Auxiliary configuration structure.
-* It will be good to isolate this structure in order to enably unity testing
+* External function to run Unity Tests
+* tests implemented in /tests/testrunner.c
 */
-
+void RunAllTests(void);
 
 /*
 * Refactoring main loop to extract functions
@@ -194,46 +193,7 @@ void gettimeofday(struct timeval *t, struct timezone *dummy)
 * constants stored in constants.c.  Otherwise, there will be no variables
 * set to set the rest of the vars to, which will mean trouble --> Mythran
 *
-* TODO: create some kind of Unit Testing
-*
-char* resolveConfigFileName(int argc, char **argv, char* defaultConfigFile) {
-	int pos = 1;
-	char* configFileName = NULL;
-
-
-	while ((pos < argc) && (*(argv[pos]) == '-'))
-	{
-		if (*(argv[pos] + 1) == 'f')
-		{
-			if (*(argv[pos] + 2))
-			{
-				configFileName = argv[pos] + 2;
-			}
-			else if (++pos < argc)
-			{
-				configFileName = argv[pos];
-			}
-			else
-			{
-				// Config file not found after a -f
-				puts("SYSERR: File name to read from expected after option -f.");
-				// If we just get out of the loop we will use the default configuration file.
-				return NULL;
-			}
-		}
-		pos++;
-	}
-
-	if (!configFileName) 
-	{
-		configFileName = strdup(defaultConfigFile);
-	}
-	return configFileName;
-	
-}
 */
-
-
 
 struct boot_cmd_args_data* parseCommandLine(int argc, char **argv) {
 	int argPos = 1;
@@ -257,15 +217,9 @@ struct boot_cmd_args_data* parseCommandLine(int argc, char **argv) {
 	cmdlineArgsData->dataFolder = NULL;
 	cmdlineArgsData->errorDescription = NULL;
 
-	//-o C:\log.txt -f c:\configFile.cfg -m 4000
 	while ((argPos < argc) && (*(argv[argPos]) == '-') && (cmdlineArgsData->errorFound == 0) ) {
 		switch (*(argv[argPos] + 1)) {
 		case 'f':
-			/*if (!*(argv[argPos] + 2))
-			{
-				++argPos;
-			}*/
-
 			if (*(argv[argPos] + 2)) {
 				cmdlineArgsData->configFileName = argv[argPos] + 2;
 			}
@@ -356,8 +310,18 @@ struct boot_cmd_args_data* parseCommandLine(int argc, char **argv) {
 	return cmdlineArgsData;
 }
 
-void RunAllTests(void);
 
+/**
+* Main loop
+*
+* Sequence
+* 1 -  Parse Command Line
+* 2 - Setup Logfile
+* 3 - Load default configuration (config.c)
+* 4 - Override default configuration with command line arguments
+* 5 - Enter the main game loop ( init_game(port); )
+* 6 - Once the main game exit, cleanup and shutdown
+*/
 int main(int argc, char **argv)
 {
   const char *dir;
@@ -380,7 +344,6 @@ int main(int argc, char **argv)
 	  printf(" %s ", cmdData->errorDescription);
 	  exit(-1);
   }
-
   if (cmdData->runUnityTest == TRUE) {
 	  RunAllTests();
 	  if (cmdData->exitAfterTests == TRUE) {
@@ -407,8 +370,6 @@ int main(int argc, char **argv)
 	  );
 	  exit(0);
   }
-
-
 
   /*
   * Check if we have a command line config file ( -f <config_file_name> ) or 
@@ -497,8 +458,9 @@ int main(int argc, char **argv)
   }
   log("Using %s as data directory.", dir);
 
-  if (scheck)
-    boot_world();
+  if (scheck) {
+	  boot_world();
+  }
   else {
     log("Running game on port %d.", port);
     init_game(port);
@@ -650,6 +612,7 @@ static void init_game(ush_int local_port)
   /* We don't want to restart if we crash before we get up. */
   touch(KILLSCRIPT_FILE);
 
+  log("Starting random number generator.");
   circle_srandom(time(0));
 
   log("Finding player limit.");
@@ -657,7 +620,7 @@ static void init_game(ush_int local_port)
 
   /* If copyover mother_desc is already set up */
   if (!fCopyOver) {
-     log ("Opening mother connection.");
+     log ("COPYOVER: Opening mother connection.");
      mother_desc = init_socket (local_port);
   }
   
@@ -799,6 +762,8 @@ static socket_t init_socket(ush_int local_port)
 /**
  * Removing Bullshit code to identify MAX_PLAYING. Just set it in config file
  * No need to increased complexity with no aggregated value
+ *
+ * TODO: Externalize this parameter to a config file.
  */
 static int get_max_players(void)
 {

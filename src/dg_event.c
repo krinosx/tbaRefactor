@@ -43,18 +43,11 @@ void event_init(void)
 }
 
 
-/** Creates a new event 'object' that is then enqueued to the global event_q.
- * @post If the newly created event is valid, it is always added to event_q.
- * @param func The function to be called when this event fires. This function
- * will be passed event_obj when it fires. The function must match the form
- * described by EVENTFUNC. 
- * @param event_obj An optional 'something' to be passed to func when this
- * event fires. It is func's job to cast event_obj. If event_obj is not needed,
- * pass in NULL.
- * @param when Number of pulses between firing(s) of this event.
- * @retval event * Returns a pointer to the newly created event.
- **/
-struct event *event_create(EVENTFUNC(*func), void *event_obj, long when)
+/**
+* Created in order to be able to write unity tests.
+* Dont use this, you can use the the default 'event_create' function
+*/
+struct event *event_create_onqueue(struct dg_queue * q, EVENTFUNC(*func), void *event_obj, long when)
 {
   struct event *new_event;
 
@@ -64,10 +57,25 @@ struct event *event_create(EVENTFUNC(*func), void *event_obj, long when)
   CREATE(new_event, struct event, 1);
   new_event->func = func;
   new_event->event_obj = event_obj;
-  new_event->q_el = queue_enq(event_q, new_event, when + pulse);
+  new_event->q_el = queue_enq(q, new_event, when + pulse);
   new_event->isMudEvent = FALSE;
 
   return new_event;
+}
+
+/** Creates a new event 'object' that is then enqueued to the global event_q.
+ * @post If the newly created event is valid, it is always added to event_q.
+ * @param func The function to be called when this event fires. This function
+ * will be passed event_obj when it fires. The function must match the form
+ * described by EVENTFUNC.
+ * @param event_obj An optional 'something' to be passed to func when this
+ * event fires. It is func's job to cast event_obj. If event_obj is not needed,
+ * pass in NULL.
+ * @param when Number of pulses between firing(s) of this event.
+ * @retval event * Returns a pointer to the newly created event.
+ **/
+struct event *event_create(EVENTFUNC(*func), void *event_obj, long when) {
+	return event_create_onqueue(event_q, func, event_obj, when);
 }
 
 /** Removes an event from event_q and frees the event. 
@@ -123,9 +131,10 @@ void event_process(void)
     the_event->q_el = NULL;
 
     /* call event func, reenqueue event if retval > 0 */
-    if ((new_time = (the_event->func)(the_event->event_obj)) > 0)
-      the_event->q_el = queue_enq(event_q, the_event, new_time + pulse);
-    else
+	if ((new_time = (the_event->func)(the_event->event_obj)) > 0) {
+		the_event->q_el = queue_enq(event_q, the_event, new_time + pulse);
+	}
+	else
     {
       if (the_event->isMudEvent && the_event->event_obj != NULL)
         free_mud_event((struct mud_event_data *) the_event->event_obj);
@@ -293,15 +302,28 @@ void *queue_head(struct dg_queue *q)
  * q_element is available, return LONG_MAX. */
 long queue_key(struct dg_queue *q)
 {
-  int i;
-
-  i = pulse % NUM_EVENT_QUEUES;
-
-  if (q->head[i])
-    return q->head[i]->key;
-  else
-    return LONG_MAX;
+	return queue_key_pulse(q, pulse);
 }
+
+/**
+* Refactored version. Used to unity testing. Use the default version 'queue_key'
+*/
+long queue_key_pulse(struct dg_queue *q, unsigned long p)
+{
+	int i;
+
+	i = p % NUM_EVENT_QUEUES;
+
+	if (q->head[i]) 
+	{
+		return q->head[i]->key;
+	}
+	else 
+	{
+		return LONG_MAX;
+	}
+}
+
 
 /** Returns the key of queue element qe.
  * @param qe Pointer to the keyed q_element.

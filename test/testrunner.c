@@ -4,6 +4,8 @@
 
 /** Function prototypes for test suites */
 CuSuite* CommGetSuite(void);
+CuSuite* dg_eventGetSuite(void);
+
 
 void RunAllTests(void)
 {
@@ -11,6 +13,8 @@ void RunAllTests(void)
 	CuSuite* suite = CuSuiteNew();
 
 	CuSuiteAddSuite(suite, CommGetSuite());
+	CuSuiteAddSuite(suite, dg_eventGetSuite());
+	
 
 	CuSuiteRun(suite);
 	CuSuiteSummary(suite, output);

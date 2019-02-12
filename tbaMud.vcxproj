@@ -101,6 +101,7 @@
     <ClCompile Include="src\zmalloc.c" />
     <ClCompile Include="test\comm.test.c" />
     <ClCompile Include="test\CuTest.c" />
+    <ClCompile Include="test\dg_event.test.c" />
     <ClCompile Include="test\testrunner.c" />
   </ItemGroup>
   <ItemGroup>

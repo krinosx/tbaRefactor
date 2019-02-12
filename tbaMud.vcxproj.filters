@@ -276,6 +276,9 @@
     <ClCompile Include="test\testrunner.c">
       <Filter>Source Files\testes</Filter>
     </ClCompile>
+    <ClCompile Include="test\dg_event.test.c">
+      <Filter>Source Files\testes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\act.h">

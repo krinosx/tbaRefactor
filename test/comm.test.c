@@ -13,29 +13,6 @@ struct boot_cmd_args_data* parseCommandLine(int argc, char **argv);
 * Testing code
 */
 
-/**
-* Check if we can get the default file name if noone is provided with -f
-
- printf("Usage: %s [-c] [-m] [-q] [-r] [-s] [-d pathname] [port #]\n"
-		  "  -c             Enable syntax check mode.\n"
-		  "  -d <directory> Specify library directory (defaults to 'lib').\n"
-		  "  -h             Print this command line argument help.\n"
-		  "  -m             Start in mini-MUD mode.\n"
-		  "  -f<file>       Use <file> for configuration. Note: There is no space after -f flag\n"
-		  "  -o<file>       Write log to <file> instead of stderr. There is no space after -o flag \n"
-		  "  -q             Quick boot (doesn't scan rent for object limits)\n"
-		  "  -r             Restrict MUD -- no new players allowed.\n"
-		  "  -s             Suppress special procedure assignments.\n"
-		  "  -t				Run unity test before loading the world. Quit if any tests fail.\n"
-		  "  -T				Run unity test before loading the world. Quit after test execution (even if all pass).\n"
-		  " Note:		These arguments are 'CaSe SeNsItIvE!!!'\n",
-		  argv[0]
-	  );
-	  exit(0);
-*/
-//struct boot_cmd_args_data;
-
-
 void test_parseCommandLine_fullargs(CuTest* tc)
 {
 	int argc = 14;
