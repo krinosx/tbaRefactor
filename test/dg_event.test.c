@@ -1,3 +1,8 @@
+/*
+Removed headers... not used...
+Keep it here until the testing script is finished... 
+if everything keep working, remove it.
+
 #include "../src/conf.h"
 #include "../src/sysdep.h"
 #include "../src/structs.h"
@@ -5,26 +10,42 @@
 #include "../src/db.h"
 #include "../src/dg_event.h"
 #include "../src/constants.h"
-#include "../src/comm.h" /* For access to the game pulse */
+#include "../src/comm.h" /* For access to the game pulse 
+#include "../src/mud_event.h"
+*/
+
+
+#include "../src/structs.h"
+#include "../src/dg_event.h"
+#include "../src/constants.h"
 #include "../src/mud_event.h"
 
-
 #include "CuTest.h"
-
-
 
 /*-------------------------------------------------------------------------*
  * CuString Test
  *-------------------------------------------------------------------------*/
  /** Function prototypes for code being tested */
 struct dg_queue *queue_init(void);
+struct event *event_create(EVENTFUNC(*func), void *event_obj, long when);
+struct event *event_create_onqueue(struct dg_queue * q, EVENTFUNC(*func), void *event_obj, long when);
+long queue_key_pulse(struct dg_queue *q, unsigned long p);
+
+
+/**
+* simple function to create events
+*/
+static EVENTFUNC(simple_func) {
+
+	int i = 1 + 1;
+	return 0l;
+}
 
 /**
 * Testing code
 */
 void test_queue_init(CuTest* tc)
-{
-	
+{	
 	static struct dg_queue *event_q;
 	event_q = queue_init();
 
@@ -48,30 +69,6 @@ void test_queue_init(CuTest* tc)
 	*/
 	queue_free(event_q);
 
-}
-
-
-
-/** Creates a new event 'object' that is then enqueued to the global event_q.
- * @post If the newly created event is valid, it is always added to event_q.
- * @param func The function to be called when this event fires. This function
- * will be passed event_obj when it fires. The function must match the form
- * described by EVENTFUNC.
- * @param event_obj An optional 'something' to be passed to func when this
- * event fires. It is func's job to cast event_obj. If event_obj is not needed,
- * pass in NULL.
- * @param when Number of pulses between firing(s) of this event.
- * @retval event * Returns a pointer to the newly created event.
- **/
-struct event *event_create(EVENTFUNC(*func), void *event_obj, long when);
-struct event *event_create_onqueue(struct dg_queue * q, EVENTFUNC(*func), void *event_obj, long when);
-long queue_key_pulse(struct dg_queue *q, unsigned long p);
-
-
-static EVENTFUNC(simple_func) {
-	
-	int i = 1 + 1;
-	return 0l;
 }
 
 
@@ -170,7 +167,6 @@ void test_queue_key(CuTest* tc) {
 	mud_event = event_create_onqueue(event_q, simple_func, NULL, 8);
 	mud_event = event_create_onqueue(event_q, simple_func, NULL, 9);
 	mud_event = event_create_onqueue(event_q, simple_func, NULL, 11);
-	
 
 	pulse = 10l;
 	long queue_head_key10 = queue_key_pulse(event_q, pulse);
@@ -196,11 +192,7 @@ void test_queue_key(CuTest* tc) {
 	* Release resources
 	*/
 	queue_free(event_q);
-
-	
 }
-
-
 
 
 /**
@@ -213,8 +205,6 @@ CuSuite* dg_eventGetSuite(void)
 	SUITE_ADD_TEST(suite, test_queue_init);
 	SUITE_ADD_TEST(suite, test_event_create);
 	SUITE_ADD_TEST(suite, test_queue_key);
-	
-	
 	
 	return suite;
 }

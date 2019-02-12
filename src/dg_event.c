@@ -294,16 +294,9 @@ void *queue_head(struct dg_queue *q)
   return dg_data;
 }
 
-/** Returns the key of the head element of the priority queue.
- * @pre pulse must be defined. This is a multi-headed queue, the current
- * head is determined by the current pulse. 
- * @param q Queue to check for.
- * @retval long Return the key element of the head q_element. If no head
- * q_element is available, return LONG_MAX. */
-long queue_key(struct dg_queue *q)
-{
-	return queue_key_pulse(q, pulse);
-}
+
+
+
 
 /**
 * Refactored version. Used to unity testing. Use the default version 'queue_key'
@@ -324,6 +317,16 @@ long queue_key_pulse(struct dg_queue *q, unsigned long p)
 	}
 }
 
+/** Returns the key of the head element of the priority queue.
+ * @pre pulse must be defined. This is a multi-headed queue, the current
+ * head is determined by the current pulse.
+ * @param q Queue to check for.
+ * @retval long Return the key element of the head q_element. If no head
+ * q_element is available, return LONG_MAX. */
+long queue_key(struct dg_queue *q)
+{
+	return queue_key_pulse(q, pulse);
+}
 
 /** Returns the key of queue element qe.
  * @param qe Pointer to the keyed q_element.
