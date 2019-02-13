@@ -27,9 +27,9 @@ if everything keep working, remove it.
  *-------------------------------------------------------------------------*/
  /** Function prototypes for code being tested */
 struct dg_queue *queue_init(void);
-struct event *event_create(EVENTFUNC(*func), void *event_obj, long when);
-struct event *event_create_onqueue(struct dg_queue * q, EVENTFUNC(*func), void *event_obj, long when);
+struct event *event_create_onqueue(struct dg_queue * q, unsigned long current_pulse, EVENTFUNC(*func), void *event_obj, long when);
 long queue_key_pulse(struct dg_queue *q, unsigned long p);
+void *queue_head_pulse(struct dg_queue *q, unsigned long current_pulse);
 
 
 /**
@@ -76,7 +76,10 @@ void test_event_create(CuTest* tc) {
 	static struct dg_queue *event_q;
 	event_q = queue_init();
 	struct event * mud_event;
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 10);
+
+	unsigned long currentPulse = 0;
+
+	mud_event = event_create_onqueue(event_q, currentPulse,  simple_func, NULL, 10);
 
 	CuAssertPtrNotNullMsg(tc, "Fail to create event!", mud_event);
 
@@ -112,16 +115,19 @@ void test_queue_key(CuTest* tc) {
 	*/
 
 	// pulse is originally unsigned.
-	unsigned long pulse = 0l;
+	unsigned long enqueue_time_pulse = 0l;
+	unsigned long retrieve_time_pulse = 0l;
 	static struct dg_queue *event_q;
+	struct event * mud_event;
+
 	event_q = queue_init();
 	
 	// MIN para unsigned long
-	pulse = 0l;
-	long queue_key = queue_key_pulse(event_q, pulse);
+	retrieve_time_pulse = 0l;
+	long queue_key = queue_key_pulse(event_q, retrieve_time_pulse);
 
-	pulse = ULONG_MAX;
-	long queue_key1 = queue_key_pulse(event_q, pulse);
+	retrieve_time_pulse = ULONG_MAX;
+	long queue_key1 = queue_key_pulse(event_q, retrieve_time_pulse);
 
 	CuAssertLongEquals_Msg(tc, "Wrong value returned with pulse = 0", LONG_MAX, queue_key);
 	CuAssertLongEquals_Msg(tc, "Wrong value returned with pulse = ULONG_MAX", LONG_MAX, queue_key1);
@@ -130,17 +136,17 @@ void test_queue_key(CuTest* tc) {
 	/**
 	* Seccond use case, testing with a queue with only 1 event with key = 10
 	*/
-	struct event * mud_event;
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 10);
 
-	pulse = 0l;
-	long queue_key2 = queue_key_pulse(event_q, pulse);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 10);
 
-	pulse = 1l;
-	long queue_key3 = queue_key_pulse(event_q, pulse);
+	retrieve_time_pulse = 0l;
+	long queue_key2 = queue_key_pulse(event_q, retrieve_time_pulse);
 
-	pulse = 2l;
-	long queue_key4 = queue_key_pulse(event_q, pulse);
+	retrieve_time_pulse = 1l;
+	long queue_key3 = queue_key_pulse(event_q, retrieve_time_pulse);
+
+	retrieve_time_pulse = 2l;
+	long queue_key4 = queue_key_pulse(event_q, retrieve_time_pulse);
 
 	CuAssertLongEquals_Msg(tc, "Wrong value returned with pulse = 0", 10, queue_key2);
 	CuAssertLongEquals_Msg(tc, "Wrong value returned with pulse = 0", LONG_MAX, queue_key3);
@@ -157,29 +163,29 @@ void test_queue_key(CuTest* tc) {
 	* Note that the members are ordered in ascending order, so the queue_key 
 	* must always return the smallest 'key' value from a event in each bucket
 	*/
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 1);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 2);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 3);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 4);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 5);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 6);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 7);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 8);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 9);
-	mud_event = event_create_onqueue(event_q, simple_func, NULL, 11);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 1);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 2);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 3);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 4);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 5);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 6);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 7);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 8);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 9);
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, 11);
 
-	pulse = 10l;
-	long queue_head_key10 = queue_key_pulse(event_q, pulse);
-	pulse = 21l;
-	long queue_head_key1 = queue_key_pulse(event_q, pulse);
-	pulse = 52l;
-	long queue_head_key2 = queue_key_pulse(event_q, pulse);
-	pulse = 1203l;
-	long queue_head_key3 = queue_key_pulse(event_q, pulse);
-	pulse = 1000004l;
-	long queue_head_key4 = queue_key_pulse(event_q, pulse);
-	pulse = ULONG_MAX; // (4294967295 % 10 = 5)
-	long queue_head_key5 = queue_key_pulse(event_q, pulse);
+	retrieve_time_pulse = 10l;
+	long queue_head_key10 = queue_key_pulse(event_q, retrieve_time_pulse);
+	retrieve_time_pulse = 21l;
+	long queue_head_key1 = queue_key_pulse(event_q, retrieve_time_pulse);
+	retrieve_time_pulse = 52l;
+	long queue_head_key2 = queue_key_pulse(event_q, retrieve_time_pulse);
+	retrieve_time_pulse = 1203l;
+	long queue_head_key3 = queue_key_pulse(event_q, retrieve_time_pulse);
+	retrieve_time_pulse = 1000004l;
+	long queue_head_key4 = queue_key_pulse(event_q, retrieve_time_pulse);
+	retrieve_time_pulse = ULONG_MAX; // (4294967295 % 10 = 5)
+	long queue_head_key5 = queue_key_pulse(event_q, retrieve_time_pulse);
 
 
 	CuAssertLongEquals(tc, 10, queue_head_key10);
@@ -194,6 +200,48 @@ void test_queue_key(CuTest* tc) {
 	queue_free(event_q);
 }
 
+void test_queue_head(CuTest *tc) {
+
+	/*
+	* First use case. A empty queue
+	*/
+
+	// pulse is originally unsigned.
+	unsigned long enqueue_time_pulse = 0l;
+	unsigned long retrieve_time_pulse = 0l;
+	int event_delay = 1;
+
+	static struct dg_queue *event_q;
+	struct event * mud_event;
+
+	event_q = queue_init();
+
+	// Check against an empty queue
+	void * event_data = queue_head_pulse(event_q, retrieve_time_pulse);
+	CuAssertPtrEquals(tc, NULL, event_data);
+
+
+	// Put an event on the queue
+	mud_event = event_create_onqueue(event_q, enqueue_time_pulse, simple_func, NULL, event_delay);
+	
+	// Create the correct pulse to check the queue
+	retrieve_time_pulse = enqueue_time_pulse + event_delay;
+
+	// If we pass the wrong pulse, it must return nothing
+	void * event_data0 = queue_head_pulse(event_q, retrieve_time_pulse+2);
+	CuAssertPtrEquals(tc, NULL, event_data0);
+
+	// if we pass the correct pulse it must return the event
+	void * event_data1 = queue_head_pulse(event_q, retrieve_time_pulse);
+	CuAssertPtrNotNull(tc, event_data1);
+	// TODO: Check if its possible to change the pointer from *void to 'event' type
+
+	// The routine must remove the element from queue. 
+	// If we call it again, nothing must be returned
+	void * event_data2 = queue_head_pulse(event_q, retrieve_time_pulse);
+	CuAssertPtrEquals(tc, NULL, event_data2);
+}
+
 
 /**
  * Export function to aggregate all tests. This function must be
@@ -205,6 +253,7 @@ CuSuite* dg_eventGetSuite(void)
 	SUITE_ADD_TEST(suite, test_queue_init);
 	SUITE_ADD_TEST(suite, test_event_create);
 	SUITE_ADD_TEST(suite, test_queue_key);
-	
+	SUITE_ADD_TEST(suite, test_queue_head);
+
 	return suite;
 }

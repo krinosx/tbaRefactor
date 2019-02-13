@@ -46,8 +46,9 @@ void event_init(void)
 /**
 * Created in order to be able to write unity tests.
 * Dont use this, you can use the the default 'event_create' function
+* @param current_pulse the actual pulse of the game world.
 */
-struct event *event_create_onqueue(struct dg_queue * q, EVENTFUNC(*func), void *event_obj, long when)
+struct event *event_create_onqueue(struct dg_queue * q, unsigned long current_pulse, EVENTFUNC(*func), void *event_obj, long when)
 {
   struct event *new_event;
 
@@ -57,13 +58,15 @@ struct event *event_create_onqueue(struct dg_queue * q, EVENTFUNC(*func), void *
   CREATE(new_event, struct event, 1);
   new_event->func = func;
   new_event->event_obj = event_obj;
-  new_event->q_el = queue_enq(q, new_event, when + pulse);
+  new_event->q_el = queue_enq(q, new_event, when + current_pulse);
   new_event->isMudEvent = FALSE;
 
   return new_event;
 }
 
 /** Creates a new event 'object' that is then enqueued to the global event_q.
+ * @pre pulse must be defined. This is a multi-headed queue, the current
+ * head is determined by the current pulse.
  * @post If the newly created event is valid, it is always added to event_q.
  * @param func The function to be called when this event fires. This function
  * will be passed event_obj when it fires. The function must match the form
@@ -75,7 +78,7 @@ struct event *event_create_onqueue(struct dg_queue * q, EVENTFUNC(*func), void *
  * @retval event * Returns a pointer to the newly created event.
  **/
 struct event *event_create(EVENTFUNC(*func), void *event_obj, long when) {
-	return event_create_onqueue(event_q, func, event_obj, when);
+	return event_create_onqueue(event_q, pulse, func, event_obj, when);
 }
 
 /** Removes an event from event_q and frees the event. 
@@ -119,7 +122,12 @@ void event_process(void)
   struct event *the_event;
   long new_time;
 
+  /**
+  * If the head element of current bucket should have been executed 
+  * in the past or now...
+  */
   while ((long) pulse >= queue_key(event_q)) {
+	// Check if its an valid event
     if (!(the_event = (struct event *) queue_head(event_q))) {
       log("SYSERR: Attempt to get a NULL event");
       return;
@@ -259,41 +267,64 @@ void queue_deq(struct dg_queue *q, struct q_element *qe)
 
   i = qe->key % NUM_EVENT_QUEUES;
 
-  if (qe->prev == NULL)
-    q->head[i] = qe->next;
-  else
-    qe->prev->next = qe->next;
+  if (qe->prev == NULL) {
+	  q->head[i] = qe->next;
+  }
+  else {
+	  qe->prev->next = qe->next;
+  }
 
-  if (qe->next == NULL)
-    q->tail[i] = qe->prev;
-  else
-    qe->next->prev = qe->prev;
+  if (qe->next == NULL) {
+	  q->tail[i] = qe->prev;
+  }
+  else {
+	  qe->next->prev = qe->prev;
+  }
 
   free(qe);
 }
 
-/** Removes and returns the data of the first element of the priority queue q. 
- * @pre pulse must be defined. This is a multi-headed queue, the current
- * head is determined by the current pulse.
- * @post the q->head is dequeued. 
- * @param q The queue to return the head of.
- * @retval void * NULL if there is not a currently available head, pointer
- * to any data object associated with the queue element. */
-void *queue_head(struct dg_queue *q)
+/**
+* Refactored version of the method to enable unit testing.
+* This method does not use global variables.
+* keep using the original version 'queue_head(struct dg_queue *q)'
+* - Scenarios to be tested based on method execution graph
+*	 1 - When queue has no element at head[i]
+*	 2 - when queue has element at head [i]
+* - Exception scenarios
+*	1 - when head[i]->data is NULL: We dont know if there is no 
+*    event or if the event_data is null, but in this case, does it matter?
+*
+*/
+void *queue_head_pulse(struct dg_queue *q, unsigned long current_pulse)
 {
   void *dg_data;
   int i;
 
-  i = pulse % NUM_EVENT_QUEUES;
+  i = current_pulse % NUM_EVENT_QUEUES;
 
-  if (!q->head[i])
-    return NULL;
+  if (!q->head[i]) {
+	  return NULL;
+  }
+  else {
 
-  dg_data = q->head[i]->data;
-  queue_deq(q, q->head[i]);
-  return dg_data;
+	  dg_data = q->head[i]->data;
+	  queue_deq(q, q->head[i]);
+	  return dg_data;
+  }
 }
 
+/** 
+*  Removes and returns the data of the first element of the priority queue q.
+ * @pre pulse must be defined. This is a multi-headed queue, the current
+ * head is determined by the current pulse.
+ * @post the q->head is dequeued.
+ * @param q The queue to return the head of.
+ * @retval void * NULL if there is not a currently available head, pointer
+ * to any data object associated with the queue element. */
+void *queue_head(struct dg_queue *q) {
+	return queue_head_pulse(q, pulse);
+}
 
 
 
@@ -317,7 +348,8 @@ long queue_key_pulse(struct dg_queue *q, unsigned long p)
 	}
 }
 
-/** Returns the key of the head element of the priority queue.
+/** 
+ * Returns the key (pulse) of the head element of the priority queue.
  * @pre pulse must be defined. This is a multi-headed queue, the current
  * head is determined by the current pulse.
  * @param q Queue to check for.
