@@ -48,7 +48,7 @@ void event_init(void)
 * Dont use this, you can use the the default 'event_create' function
 * @param current_pulse the actual pulse of the game world.
 */
-struct event *event_create_onqueue(struct dg_queue * q, unsigned long current_pulse, EVENTFUNC(*func), void *event_obj, long when)
+struct event *event_create_local(struct dg_queue * q, unsigned long current_pulse, EVENTFUNC(*func), void *event_obj, long when)
 {
   struct event *new_event;
 
@@ -78,28 +78,38 @@ struct event *event_create_onqueue(struct dg_queue * q, unsigned long current_pu
  * @retval event * Returns a pointer to the newly created event.
  **/
 struct event *event_create(EVENTFUNC(*func), void *event_obj, long when) {
-	return event_create_onqueue(event_q, pulse, func, event_obj, when);
+	return event_create_local(event_q, pulse, func, event_obj, when);
 }
 
-/** Removes an event from event_q and frees the event. 
- * @param event Pointer to the event to be dequeued and removed. 
+/** Refactored to remove global variables reference and allow to
+ * unit testing. Keep calling the 
+ * default 'void event_cancel(strict event * event)' version.
+ */
+void event_cancel_local(struct event *event, struct dg_queue * queue)
+{
+	if (!event) {
+		log("SYSERR:  Attempted to cancel a NULL event");
+		return;
+	}
+
+	if (!event->q_el) {
+		log("SYSERR:  Attempted to cancel a non-NULL unqueued event, freeing anyway");
+	}
+	else {
+		queue_deq(queue, event->q_el);
+	}
+	if (event->event_obj) {
+		cleanup_event_obj(event);
+	}
+	free(event);
+}
+
+/** Removes an event from event_q and frees the event.
+ * @param event Pointer to the event to be dequeued and removed.
  */
 void event_cancel(struct event *event)
 {
-  if (!event) {
-    log("SYSERR:  Attempted to cancel a NULL event");
-    return;
-    }
-
-  if (!event->q_el) {
-    log("SYSERR:  Attempted to cancel a non-NULL unqueued event, freeing anyway");
-  } else
-    queue_deq(event_q, event->q_el);
-
-  if (event->event_obj)
-      cleanup_event_obj(event);
-
-  free(event);
+	event_cancel_local(event, event_q);
 }
 
 /* The memory freeing routine tied into the mud event system */
@@ -107,17 +117,19 @@ void cleanup_event_obj(struct event *event)
 {
   struct mud_event_data * mud_event;
 
-  if (event->isMudEvent) {  
-    mud_event = (struct mud_event_data *) event->event_obj;
-    free_mud_event(mud_event);
-  } else
-    free(event->event_obj);
+  if (event->isMudEvent) {
+	  mud_event = (struct mud_event_data *) event->event_obj;
+	  free_mud_event(mud_event);
+  }
+  else {
+	  free(event->event_obj);
+  }
 }
 
-/** Process any events whose time has come. Should be called from, and at, every
- * pulse of heartbeat. Re-enqueues multi-use events.
+/** 
+* Refactores to allow unit testing. Removing use of global parameters
  */
-void event_process(void)
+void event_process_local(const unsigned long current_pulse, struct dg_queue * queue)
 {
   struct event *the_event;
   long new_time;
@@ -126,21 +138,22 @@ void event_process(void)
   * If the head element of current bucket should have been executed 
   * in the past or now...
   */
-  while ((long) pulse >= queue_key(event_q)) {
-	// Check if its an valid event
-    if (!(the_event = (struct event *) queue_head(event_q))) {
+  while ((long)current_pulse >= queue_key(queue)) {
+	// Check if its an valid event and retrieve it from 
+	// the queue (remove it from queue also)
+    if (!(the_event = (struct event *) queue_head(queue))) {
       log("SYSERR: Attempt to get a NULL event");
       return;
     }
 
     /* Set the_event->q_el to NULL so that any functions called beneath 
      * event_process can tell if they're being called beneath the actual
-     * event function. */
+     * event function. ?? WHAT??? we MUST refactor it to remove void pointers. */
     the_event->q_el = NULL;
 
     /* call event func, reenqueue event if retval > 0 */
 	if ((new_time = (the_event->func)(the_event->event_obj)) > 0) {
-		the_event->q_el = queue_enq(event_q, the_event, new_time + pulse);
+		the_event->q_el = queue_enq(queue, the_event, new_time + current_pulse);
 	}
 	else
     {
@@ -153,16 +166,34 @@ void event_process(void)
   }
 }
 
+/** Process any events whose time has come. Should be called from, and at, every
+ * pulse of heartbeat. Re-enqueues multi-use events.
+ *-- GLOBALS
+ * @pre pulse must be defined
+ * @pre event_q must be defined
+ */
+void event_process(void) {
+	event_process_local(pulse, event_q);
+}
+
+/** Refactored in order to remove global variables reference
+* and enable unit testing.
+*/
+long event_time_local(struct event *event, unsigned long pulse)
+{
+	long when;
+
+	when = queue_elmt_key(event->q_el);
+
+	return (when - pulse);
+}
+
 /** Returns the time remaining before the event as how many pulses from now. 
  * @param event Check this event for its scheduled activation time.
  * @retval long Number of pulses before this event will fire. */
 long event_time(struct event *event)
 {
-  long when;
-
-  when = queue_elmt_key(event->q_el);
-
-  return (when - pulse);
+	return event_time_local(event, pulse);
 }
 
 /** Frees all events from event_q. */
@@ -177,10 +208,12 @@ void event_free_all(void)
  **/
 int event_is_queued(struct event *event)
 {
-   if (event->q_el)
-     return 1;
-   else
-     return 0;
+	if (event->q_el) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 /***************************************************************************
  * End mud specific event queue functions
@@ -221,26 +254,28 @@ struct q_element *queue_enq(struct dg_queue *q, void *data, long key)
 
   bucket = key % NUM_EVENT_QUEUES;   /* which queue does this go in */
 
-  if (!q->head[bucket]) { /* queue is empty */
+  if (!q->head[bucket]) 
+  { /* queue is empty */
     q->head[bucket] = qe;
     q->tail[bucket] = qe;
   }
-
-  else {
+  else 
+  {
     for (i = q->tail[bucket]; i; i = i->prev) {
 
-      if (i->key < key) { /* found insertion point */
-	if (i == q->tail[bucket])
-	  q->tail[bucket] = qe;
-	else {
-	  qe->next = i->next;
-	  i->next->prev = qe;
-	}
+		if (i->key < key) { /* found insertion point */
+			if (i == q->tail[bucket]) {
+				q->tail[bucket] = qe;
+			}
+			else {
+				qe->next = i->next;
+				i->next->prev = qe;
+			}
 
-	qe->prev = i;
-	i->next = qe;
-	break;
-      }
+			qe->prev = i;
+			i->next = qe;
+			break;
+		}
     }
 
     if (i == NULL) { /* insertion point is front of list */
@@ -296,7 +331,7 @@ void queue_deq(struct dg_queue *q, struct q_element *qe)
 *    event or if the event_data is null, but in this case, does it matter?
 *
 */
-void *queue_head_pulse(struct dg_queue *q, unsigned long current_pulse)
+void *queue_head_local(struct dg_queue *q, unsigned long current_pulse)
 {
   void *dg_data;
   int i;
@@ -307,7 +342,6 @@ void *queue_head_pulse(struct dg_queue *q, unsigned long current_pulse)
 	  return NULL;
   }
   else {
-
 	  dg_data = q->head[i]->data;
 	  queue_deq(q, q->head[i]);
 	  return dg_data;
@@ -323,16 +357,14 @@ void *queue_head_pulse(struct dg_queue *q, unsigned long current_pulse)
  * @retval void * NULL if there is not a currently available head, pointer
  * to any data object associated with the queue element. */
 void *queue_head(struct dg_queue *q) {
-	return queue_head_pulse(q, pulse);
+	return queue_head_local(q, pulse);
 }
-
-
 
 
 /**
 * Refactored version. Used to unity testing. Use the default version 'queue_key'
 */
-long queue_key_pulse(struct dg_queue *q, unsigned long p)
+long queue_key_local(struct dg_queue *q, unsigned long p)
 {
 	int i;
 
@@ -357,7 +389,7 @@ long queue_key_pulse(struct dg_queue *q, unsigned long p)
  * q_element is available, return LONG_MAX. */
 long queue_key(struct dg_queue *q)
 {
-	return queue_key_pulse(q, pulse);
+	return queue_key_local(q, pulse);
 }
 
 /** Returns the key of queue element qe.
