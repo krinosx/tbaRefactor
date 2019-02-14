@@ -101,7 +101,7 @@ void event_cancel_local(struct event *event, struct dg_queue * queue)
 	if (event->event_obj) {
 		cleanup_event_obj(event);
 	}
-	free(event);
+	DISPOSE(event);
 }
 
 /** Removes an event from event_q and frees the event.
@@ -122,7 +122,7 @@ void cleanup_event_obj(struct event *event)
 	  free_mud_event(mud_event);
   }
   else {
-	  free(event->event_obj);
+	  DISPOSE(event->event_obj);
   }
 }
 
@@ -160,7 +160,7 @@ void event_process_local(const unsigned long current_pulse, struct dg_queue * qu
       if (the_event->isMudEvent && the_event->event_obj != NULL)
         free_mud_event((struct mud_event_data *) the_event->event_obj);
       /* It is assumed that the_event will already have freed ->event_obj. */
-      free(the_event);
+	  DISPOSE(the_event);
     }
       
   }
@@ -316,7 +316,7 @@ void queue_deq(struct dg_queue *q, struct q_element *qe)
 	  qe->next->prev = qe->prev;
   }
 
-  free(qe);
+  DISPOSE(qe);
 }
 
 /**
@@ -421,12 +421,41 @@ void queue_free(struct dg_queue *q)
         if (event->event_obj)
           cleanup_event_obj(event);
 
-        free(event);
+        DISPOSE(event);
       }
-      free(qe);
+	  DISPOSE(qe);
     }
   }
 
-  free(q);
+  DISPOSE(q);
+}
+
+
+/**
+* Refactoring to avoid 'Dangling pointers' 
+*/
+void queue_free_2(struct dg_queue ** q2)
+{
+	int i;
+	struct q_element *qe, *next_qe;
+	struct event *event;
+	for (i = 0; i < NUM_EVENT_QUEUES; i++)
+	{
+		for (qe = (*q2)->head[i]; qe; qe = next_qe)
+		{
+			next_qe = qe->next;
+			if ((event = (struct event *) qe->data) != NULL)
+			{
+				if (event->event_obj)
+					cleanup_event_obj(event);
+
+				DISPOSE(event);
+			}
+			DISPOSE(qe);
+		}
+	}
+	DISPOSE(*q2);
+
+	*q2 = NULL;
 }
 

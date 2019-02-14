@@ -6,7 +6,7 @@ if everything keep working, remove it.
 #include "../src/conf.h"
 #include "../src/sysdep.h"
 #include "../src/structs.h"
-#include "../src/utils.h"
+
 #include "../src/db.h"
 #include "../src/dg_event.h"
 #include "../src/constants.h"
@@ -16,6 +16,7 @@ if everything keep working, remove it.
 
 
 #include "../src/structs.h"
+#include "../src/utils.h"
 #include "../src/dg_event.h"
 #include "../src/constants.h"
 #include "../src/mud_event.h"
@@ -42,7 +43,8 @@ void event_process_local(const unsigned long current_pulse, struct dg_queue * qu
 
 
 long event_time_local(struct event *event, unsigned long pulse);
-void queue_free(struct dg_queue *q);
+/* Refactored version */
+void queue_free_2(struct dg_queue ** q);
 /**
 * simple function to create events
 */
@@ -78,10 +80,8 @@ void test_queue_init(CuTest* tc)
 	/*
 	* Release resources
 	*/
-	queue_free(event_q);
-
+	queue_free_2(&event_q);
 }
-
 
 void test_event_create(CuTest* tc) {
 	static struct dg_queue *event_q;
@@ -116,7 +116,7 @@ void test_event_create(CuTest* tc) {
 	/*
 	* Release resources
 	*/
-	queue_free(event_q);
+	queue_free_2(&event_q);
 }
 
 void test_queue_key(CuTest* tc) {
@@ -208,7 +208,7 @@ void test_queue_key(CuTest* tc) {
 	/*
 	* Release resources
 	*/
-	queue_free(event_q);
+	queue_free_2(&event_q);
 }
 
 void test_queue_head(CuTest *tc) {
@@ -230,8 +230,7 @@ void test_queue_head(CuTest *tc) {
 	// Check against an empty queue
 	void * event_data = queue_head_local(event_q, retrieve_time_pulse);
 	CuAssertPtrEquals(tc, NULL, event_data);
-
-
+	
 	// Put an event on the queue
 	mud_event = event_create_local(event_q, enqueue_time_pulse, simple_func, NULL, event_delay);
 	
@@ -254,23 +253,104 @@ void test_queue_head(CuTest *tc) {
 }
 
 void test_queue_enq(CuTest *tc) {
-	//struct q_element *queue_enq(struct dg_queue *q, void *data, long key)
+
+	struct dg_queue * event_q;
+	unsigned long current_pulse = 0;
+	void *event_obj = NULL;
+	long bucket_number = 1;
+	long when = bucket_number;
+	struct event *new_event_1;
+
+	// create the queue
+	event_q = queue_init();
+
+
+	// Allocate memory for the event object
+	CREATE(new_event_1, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_1 object.", new_event_1);
+	new_event_1->func = simple_func;
+	new_event_1->event_obj = event_obj;
+	new_event_1->isMudEvent = FALSE;
+
+	// Add an single element to bucket determied by 'when' (when % 10)
+	new_event_1->q_el = queue_enq(event_q, new_event_1, when + current_pulse);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_1) not pointing to a valid queue bucket", new_event_1->q_el);
+	CuAssertPtrEquals_Msg(tc, "", event_q->head[when%10], new_event_1->q_el);
+	CuAssertPtrEquals_Msg(tc, "", event_q->tail[when%10], new_event_1->q_el);
+
+
+	/**
+	 * Enqueue a seccond element, in the same bucket and check if the order is OK
+	 */
+	// Allocate memory for the event object
+	struct event *new_event_2;
+	CREATE(new_event_2, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_2 object.", new_event_2);
+	new_event_2->func = simple_func;
+	new_event_2->event_obj = event_obj;
+	new_event_2->isMudEvent = FALSE;
+
+	// Change time to a multiple of 10 + event_bucket
+	when = when + 50; // it must fit in the same bucket
+
+	// Add an single element to bucket determied by 'when' (when % 10)
+	new_event_2->q_el = queue_enq(event_q, new_event_2, when + current_pulse);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_2) not pointing to a valid queue bucket", new_event_2->q_el);
+	// Check if the first element still on head
+	CuAssertPtrEquals_Msg(tc, "", event_q->head[when % 10], new_event_1->q_el);
+	//and check if the new element is on the tail
+	CuAssertPtrEquals_Msg(tc, "", event_q->tail[when % 10], new_event_2->q_el);
+	// Check references (next/previous)
+	CuAssertPtrEquals(tc, NULL, new_event_1->q_el->prev); /* Head element must have prev = NULL */
+	CuAssertPtrEquals(tc, new_event_2->q_el, new_event_1->q_el->next); /* the new element must be the ->next */
+	CuAssertPtrEquals(tc, new_event_1->q_el, new_event_2->q_el->prev);
+	CuAssertPtrEquals(tc, NULL, new_event_2->q_el->next);
+
+	/**
+	 * Finally, add a third element between the first two ones
+	 */
+	// Allocate memory for the event object
+	struct event *new_event_3;
+	CREATE(new_event_3, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_3 object.", new_event_3);
+	new_event_3->func = simple_func;
+	new_event_3->event_obj = event_obj;
+	new_event_3->isMudEvent = FALSE;
+
+	// Change time to a multiple of 10 + event_bucket
+	when = when - 20; // it must fit in middle of two previous elements
+
+	// Add an single element to bucket determied by 'when' (when % 10)
+	new_event_3->q_el = queue_enq(event_q, new_event_3, when + current_pulse);
+	CuAssertPtrNotNullMsg(tc, "Event not pointing to a valid queue bucket", new_event_3->q_el);
+	// Check if the first element (new_event_1) still on head
+	CuAssertPtrEquals_Msg(tc, "", event_q->head[when % 10], new_event_1->q_el);
+	//and check if the seccond element (new_event_2) still on tail 
+	CuAssertPtrEquals_Msg(tc, "", event_q->tail[when % 10], new_event_2->q_el);
+	
+	// Check references (next/previous) for the middle element
+	CuAssertPtrEquals(tc, new_event_1->q_el, new_event_3->q_el->prev); /* must point to head element*/
+	CuAssertPtrEquals(tc, new_event_2->q_el, new_event_3->q_el->next); /* must point to tail element*/
+	
+	/*
+	* Release resources
+	*/
+	queue_free_2(&event_q);
 }
 
 void test_queue_deq(CuTest *tc) {
 	//void queue_deq(struct dg_queue *q, struct q_element *qe)
 }
 
-
 void test_event_cancel(CuTest *tc) {
 	//void event_cancel_local(struct event *event, struct dg_queue * queue);
 }
-
 
 void test_cleanup_event_obj(CuTest *tc)
 {
 	//void cleanup_event_obj(struct event *event)
 }
+
 void test_event_proces(CuTest *tc)
 {
 	//void event_process_local(const unsigned long current_pulse, struct dg_queue * queue)
@@ -278,7 +358,78 @@ void test_event_proces(CuTest *tc)
 
 void test_event_time(CuTest *tc)
 {
-	//long event_time_local(struct event *event, unsigned long pulse)
+	struct dg_queue * event_q;
+	unsigned long current_pulse = 0;
+	long key = 99;
+	struct event *new_event;
+
+	// create the queue
+	event_q = queue_init();
+
+	// Allocate memory for the event object
+	CREATE(new_event, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_1 object.", new_event);
+	new_event->func = simple_func;
+	new_event->event_obj = NULL;
+	new_event->isMudEvent = FALSE;
+
+	// Enqueue a event with 99 pulses delay
+	new_event->q_el = queue_enq(event_q, new_event, key + current_pulse);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_1) not pointing to a valid queue bucket", new_event->q_el);
+
+
+	// Check remaining pulses (must be 99(
+	long time_remaining = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, 99, time_remaining);
+
+	current_pulse = 50;
+	time_remaining = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, 49, time_remaining);
+
+	current_pulse = 99;
+	time_remaining = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, 0, time_remaining);
+
+	current_pulse = 100;
+	time_remaining = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, -1, time_remaining);
+	
+
+	/*
+	* I think this case will never happen in the MUD... so we can check
+	* if its worth to refactor the method to return 0 when the time has passed.
+	*/
+	current_pulse = -1;
+	time_remaining = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, 100, time_remaining);
+
+
+	/**
+	* Testing limits... I really dont know exactly the math here
+	* but we must assure that the behavior will not change untill 
+	* we find out.
+	*
+	* GUESS: I think the problem is that pulse is always a Unsigned Long, but the
+	* element KEY is a simple 'long'. Maybe we should refactor it to become an 
+	* unsigned long, also we should change the method return type.
+	*/
+
+	current_pulse = LONG_MAX; /* 2147483647L */
+	long time_remaining_max = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, LONG_MIN+100, time_remaining_max);
+
+	current_pulse = LONG_MIN; /* -2147483646L */
+	long time_remaining_min = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, LONG_MAX + 100, time_remaining_min);
+
+	current_pulse = ULONG_MAX;
+	long time_remaining_umax = event_time_local(new_event, current_pulse);
+	CuAssertLongEquals(tc, 100, time_remaining_umax);	
+
+	/*
+	* Release resources
+	*/
+	queue_free_2(&event_q);
 }
 
 void test_queue_free(CuTest *tc) {
