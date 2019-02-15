@@ -70,7 +70,9 @@ long event_time(struct event *event);
 void event_free_all(void);
 void cleanup_event_obj(struct event *event);
 
-/* - queues - function protos need by other modules */
+
+
+/* - queues - function protos NOT need by other modules, it must be an INTERNAL METHODS */
 struct dg_queue *queue_init(void);
 struct q_element *queue_enq(struct dg_queue *q, void *data, long key);
 void queue_deq(struct dg_queue *q, struct q_element *qe);

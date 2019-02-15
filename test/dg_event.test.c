@@ -31,25 +31,20 @@ struct dg_queue *queue_init(void);
 struct event *event_create_local(struct dg_queue * q, unsigned long current_pulse, EVENTFUNC(*func), void *event_obj, long when);
 long queue_key_local(struct dg_queue *q, unsigned long p);
 void *queue_head_local(struct dg_queue *q, unsigned long current_pulse);
-
-void queue_deq(struct dg_queue *q, struct q_element *qe);
 struct q_element *queue_enq(struct dg_queue *q, void *data, long key);
-
-
-void event_cancel_local(struct event *event, struct dg_queue * queue);
+void queue_deq(struct dg_queue *q, struct q_element *qe);
+void event_cancel_local(struct dg_queue * queue, struct event *event);
 void cleanup_event_obj(struct event *event);
 void event_process_local(const unsigned long current_pulse, struct dg_queue * queue);
-
-
-
 long event_time_local(struct event *event, unsigned long pulse);
-/* Refactored version */
-void queue_free_2(struct dg_queue ** q);
+void queue_free_2(struct dg_queue ** q2);
+void queue_free(struct dg_queue *q);
+
+
 /**
 * simple function to create events
 */
 static EVENTFUNC(simple_func) {
-
 	int i = 1 + 1;
 	return 0l;
 }
@@ -340,12 +335,206 @@ void test_queue_enq(CuTest *tc) {
 
 void test_queue_deq(CuTest *tc) {
 	//void queue_deq(struct dg_queue *q, struct q_element *qe)
+	struct dg_queue * event_q;
+	unsigned long current_pulse = 0;
+	void *event_obj = NULL;
+	long bucket_number = 1;
+	long when = bucket_number;
+	struct event *new_event_1;
+
+	// create the queue
+	event_q = queue_init();
+
+
+	// Allocate memory for the event object
+	CREATE(new_event_1, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_1 object.", new_event_1);
+	new_event_1->func = simple_func;
+	new_event_1->event_obj = event_obj;
+	new_event_1->isMudEvent = FALSE;
+
+	// Allocate memory for the event object
+	struct event *new_event_2;
+	CREATE(new_event_2, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_2 object.", new_event_2);
+	new_event_2->func = simple_func;
+	new_event_2->event_obj = event_obj;
+	new_event_2->isMudEvent = FALSE;
+		
+	// Allocate memory for the event object
+	struct event *new_event_3;
+	CREATE(new_event_3, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_3 object.", new_event_3);
+	new_event_3->func = simple_func;
+	new_event_3->event_obj = event_obj;
+	new_event_3->isMudEvent = FALSE;
+
+	
+	// Enqueue
+	new_event_1->q_el = queue_enq(event_q, new_event_1, when + current_pulse);
+	
+	when = when + 50;
+	new_event_2->q_el = queue_enq(event_q, new_event_2, when + current_pulse);
+
+	when = when - 20; // it must fit in middle of two previous elements
+	new_event_3->q_el = queue_enq(event_q, new_event_3, when + current_pulse);
+
+	// Check if it was allocated
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_1) not pointing to a valid queue bucket", new_event_1->q_el);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_2) not pointing to a valid queue bucket", new_event_2->q_el);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_3) not pointing to a valid queue bucket", new_event_3->q_el);
+
+
+	/*
+	* Check the order
+	*/
+	CuAssertPtrEquals_Msg(tc, "Object new_event_1->q_el must be the head.", event_q->head[when % 10], new_event_1->q_el);
+	CuAssertPtrEquals_Msg(tc, "Object new_event_2->q_el must be the tail.", event_q->tail[when % 10], new_event_2->q_el);
+
+
+	// Check references (next/previous)
+	CuAssertPtrEquals(tc, NULL, new_event_1->q_el->prev); /* Head element must have prev = NULL */
+	CuAssertPtrEquals(tc, new_event_3->q_el, new_event_1->q_el->next); /* must point to middle (new_event_3)*/
+	CuAssertPtrEquals(tc, NULL, new_event_2->q_el->next); /* Tail element must have NEXT = NULL */
+	CuAssertPtrEquals(tc, new_event_3->q_el, new_event_2->q_el->prev); /* must point to middle (new_event_3)*/
+															  
+	// Check references (next/previous) for the middle element
+	CuAssertPtrEquals(tc, new_event_1->q_el, new_event_3->q_el->prev); /* must point to head element*/
+	CuAssertPtrEquals(tc, new_event_2->q_el, new_event_3->q_el->next); /* must point to tail element*/
+	
+	// OK, queue sanity checked
+	
+	// Remove first element
+	queue_deq(event_q, new_event_1->q_el);
+
+	// Middle element must become the HEAD
+	CuAssertPtrEquals_Msg(tc, "Object new_event_3->q_el must be the head.", event_q->head[when % 10], new_event_3->q_el);
+	CuAssertPtrEquals_Msg(tc, "Object new_event_2->q_el must be the tail.", event_q->tail[when % 10], new_event_2->q_el);
+	CuAssertPtrEquals(tc, NULL, new_event_3->q_el->prev); /* Head element must have prev = NULL */
+	CuAssertPtrEquals(tc, new_event_2->q_el, new_event_3->q_el->next); /* Head element must have prev = NULL */
+
+
+	queue_deq(event_q, new_event_2->q_el);
+	// new_event_3 must be the only one (head and tail)
+	CuAssertPtrEquals_Msg(tc, "Object new_event_3->q_el must be the head.", event_q->head[when % 10], new_event_3->q_el);
+	CuAssertPtrEquals_Msg(tc, "Object new_event_3->q_el must be the tail.", event_q->tail[when % 10], new_event_3->q_el);
+	CuAssertPtrEquals(tc, NULL, new_event_3->q_el->prev); /* Head element must have prev = NULL */
+	CuAssertPtrEquals(tc, NULL, new_event_3->q_el->next); /* Head element must have prev = NULL */
+
+	queue_deq(event_q, new_event_3->q_el);
+	CuAssertPtrEquals_Msg(tc, "Object event_q->head must NULL.", NULL, event_q->head[when % 10]);
+	CuAssertPtrEquals_Msg(tc, "Object event_q->tail must NULL.", NULL, event_q->tail[when % 10]);
+
+
+	/*
+	* Release resources
+	*/
+	queue_free_2(&event_q);
 }
 
 void test_event_cancel(CuTest *tc) {
 	//void event_cancel_local(struct event *event, struct dg_queue * queue);
+	//void queue_deq(struct dg_queue *q, struct q_element *qe)
+	struct dg_queue * event_q;
+	unsigned long current_pulse = 0;
+	void *event_obj = NULL;
+	long bucket_number = 1;
+	long when = bucket_number;
+	struct event *new_event_1;
+
+	// create the queue
+	event_q = queue_init();
+
+
+	// Allocate memory for the event object
+	CREATE(new_event_1, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_1 object.", new_event_1);
+	new_event_1->func = simple_func;
+	new_event_1->event_obj = event_obj;
+	new_event_1->isMudEvent = FALSE;
+
+	// Allocate memory for the event object
+	struct event *new_event_2;
+	CREATE(new_event_2, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_2 object.", new_event_2);
+	new_event_2->func = simple_func;
+	new_event_2->event_obj = event_obj;
+	new_event_2->isMudEvent = FALSE;
+
+	// Allocate memory for the event object
+	struct event *new_event_3;
+	CREATE(new_event_3, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_3 object.", new_event_3);
+	new_event_3->func = simple_func;
+	new_event_3->event_obj = event_obj;
+	new_event_3->isMudEvent = FALSE;
+
+
+	// Enqueue
+	new_event_1->q_el = queue_enq(event_q, new_event_1, when + current_pulse);
+
+	when = when + 50;
+	new_event_2->q_el = queue_enq(event_q, new_event_2, when + current_pulse);
+
+	when = when - 20; // it must fit in middle of two previous elements
+	new_event_3->q_el = queue_enq(event_q, new_event_3, when + current_pulse);
+
+	// Check if it was allocated
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_1) not pointing to a valid queue bucket", new_event_1->q_el);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_2) not pointing to a valid queue bucket", new_event_2->q_el);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_3) not pointing to a valid queue bucket", new_event_3->q_el);
+
+
+	/*
+	* Check the order
+	*/
+	CuAssertPtrEquals_Msg(tc, "Object new_event_1->q_el must be the head.", event_q->head[when % 10], new_event_1->q_el);
+	CuAssertPtrEquals_Msg(tc, "Object new_event_2->q_el must be the tail.", event_q->tail[when % 10], new_event_2->q_el);
+
+
+	// Check references (next/previous)
+	CuAssertPtrEquals(tc, NULL, new_event_1->q_el->prev); /* Head element must have prev = NULL */
+	CuAssertPtrEquals(tc, new_event_3->q_el, new_event_1->q_el->next); /* must point to middle (new_event_3)*/
+	CuAssertPtrEquals(tc, NULL, new_event_2->q_el->next); /* Tail element must have NEXT = NULL */
+	CuAssertPtrEquals(tc, new_event_3->q_el, new_event_2->q_el->prev); /* must point to middle (new_event_3)*/
+
+	// Check references (next/previous) for the middle element
+	CuAssertPtrEquals(tc, new_event_1->q_el, new_event_3->q_el->prev); /* must point to head element*/
+	CuAssertPtrEquals(tc, new_event_2->q_el, new_event_3->q_el->next); /* must point to tail element*/
+
+	// OK, queue sanity checked
+
+	// Remove first element
+	event_cancel_local(event_q, new_event_1);
+
+	// Middle element must become the HEAD
+	CuAssertPtrEquals_Msg(tc, "Object new_event_3->q_el must be the head.", event_q->head[when % 10], new_event_3->q_el);
+	CuAssertPtrEquals_Msg(tc, "Object new_event_2->q_el must be the tail.", event_q->tail[when % 10], new_event_2->q_el);
+	CuAssertPtrEquals(tc, NULL, new_event_3->q_el->prev); /* Head element must have prev = NULL */
+	CuAssertPtrEquals(tc, new_event_2->q_el, new_event_3->q_el->next); /* Head element must have prev = NULL */
+
+
+	event_cancel_local(event_q, new_event_2);
+	// new_event_3 must be the only one (head and tail)
+	CuAssertPtrEquals_Msg(tc, "Object new_event_3->q_el must be the head.", event_q->head[when % 10], new_event_3->q_el);
+	CuAssertPtrEquals_Msg(tc, "Object new_event_3->q_el must be the tail.", event_q->tail[when % 10], new_event_3->q_el);
+	CuAssertPtrEquals(tc, NULL, new_event_3->q_el->prev); /* Head element must have prev = NULL */
+	CuAssertPtrEquals(tc, NULL, new_event_3->q_el->next); /* Head element must have prev = NULL */
+
+	event_cancel_local(event_q, new_event_3);
+	CuAssertPtrEquals_Msg(tc, "Object event_q->head must NULL.", NULL, event_q->head[when % 10]);
+	CuAssertPtrEquals_Msg(tc, "Object event_q->tail must NULL.", NULL, event_q->tail[when % 10]);
+
+
+	/*
+	* Release resources
+	*/
+	queue_free_2(&event_q);
 }
 
+/**
+* I dont know a effectivfe way to thest memory freeing in C
+*/
 void test_cleanup_event_obj(CuTest *tc)
 {
 	//void cleanup_event_obj(struct event *event)
@@ -432,8 +621,32 @@ void test_event_time(CuTest *tc)
 	queue_free_2(&event_q);
 }
 
+/**
+* I dont know a effectivfe way to thest memory freeing in C
+*/
 void test_queue_free(CuTest *tc) {
-	//void queue_free(struct dg_queue *q)
+
+	struct dg_queue * event_q;
+	unsigned long current_pulse = 0;
+	long key = 99;
+	struct event *new_event;
+
+	// create the queue
+	event_q = queue_init();
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a event_q object.", event_q);
+	
+	// Allocate memory for the event object
+	CREATE(new_event, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_1 object.", new_event);
+	new_event->func = simple_func;
+	new_event->event_obj = NULL;
+	new_event->isMudEvent = FALSE;
+
+	// Enqueue a event with 99 pulses delay
+	new_event->q_el = queue_enq(event_q, new_event, key + current_pulse);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_1) not pointing to a valid queue bucket", new_event->q_el);
+
+	queue_free_2(&event_q);
 }
 
 /**

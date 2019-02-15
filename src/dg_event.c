@@ -85,7 +85,7 @@ struct event *event_create(EVENTFUNC(*func), void *event_obj, long when) {
  * unit testing. Keep calling the 
  * default 'void event_cancel(strict event * event)' version.
  */
-void event_cancel_local(struct event *event, struct dg_queue * queue)
+void event_cancel_local(struct dg_queue * queue, struct event *event)
 {
 	if (!event) {
 		log("SYSERR:  Attempted to cancel a NULL event");
@@ -97,11 +97,17 @@ void event_cancel_local(struct event *event, struct dg_queue * queue)
 	}
 	else {
 		queue_deq(queue, event->q_el);
+		event->q_el = NULL;
 	}
+
+
 	if (event->event_obj) {
 		cleanup_event_obj(event);
+		event->event_obj = NULL;
 	}
+
 	DISPOSE(event);
+	event = NULL;
 }
 
 /** Removes an event from event_q and frees the event.
@@ -109,7 +115,7 @@ void event_cancel_local(struct event *event, struct dg_queue * queue)
  */
 void event_cancel(struct event *event)
 {
-	event_cancel_local(event, event_q);
+	event_cancel_local(event_q, event);
 }
 
 /* The memory freeing routine tied into the mud event system */
@@ -120,9 +126,11 @@ void cleanup_event_obj(struct event *event)
   if (event->isMudEvent) {
 	  mud_event = (struct mud_event_data *) event->event_obj;
 	  free_mud_event(mud_event);
+	  mud_event = NULL;
   }
   else {
 	  DISPOSE(event->event_obj);
+	  event->event_obj = NULL;
   }
 }
 
@@ -298,7 +306,10 @@ void queue_deq(struct dg_queue *q, struct q_element *qe)
 {
   int i;
 
-  assert(qe);
+  if (!qe) {
+	  log("SYSERR:  Attempted to queue_deq a NULL queue element");
+	  return;
+  }
 
   i = qe->key % NUM_EVENT_QUEUES;
 
@@ -446,12 +457,14 @@ void queue_free_2(struct dg_queue ** q2)
 			next_qe = qe->next;
 			if ((event = (struct event *) qe->data) != NULL)
 			{
-				if (event->event_obj)
+				if (event->event_obj) {
 					cleanup_event_obj(event);
-
+				}
 				DISPOSE(event);
+				event = NULL;
 			}
 			DISPOSE(qe);
+			qe = NULL;
 		}
 	}
 	DISPOSE(*q2);
