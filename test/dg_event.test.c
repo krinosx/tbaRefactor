@@ -29,9 +29,9 @@ if everything keep working, remove it.
  /** Function prototypes for code being tested */
 struct dg_queue *queue_init(void);
 struct event *event_create_local(struct dg_queue * q, unsigned long current_pulse, EVENTFUNC(*func), void *event_obj, long when);
-long queue_key_local(struct dg_queue *q, unsigned long p);
+//unsigned long queue_key_local(struct dg_queue *q, unsigned long p);
 void *queue_head_local(struct dg_queue *q, unsigned long current_pulse);
-struct q_element *queue_enq(struct dg_queue *q, void *data, long key);
+struct q_element *queue_enq(struct dg_queue *q, void *data, unsigned long key);
 void queue_deq(struct dg_queue *q, struct q_element *qe);
 void event_cancel_local(struct dg_queue * queue, struct event *event);
 void cleanup_event_obj(struct event *event);
@@ -48,6 +48,17 @@ static EVENTFUNC(simple_func) {
 	int i = 1 + 1;
 	return 0l;
 }
+
+
+/**
+* A countdown func to help testing event handling
+*/
+int test_countdow_func_counter = 3;
+static EVENTFUNC(test_countdown_func) {
+	test_countdow_func_counter--;
+	return test_countdow_func_counter;
+}
+
 
 /**
 * Testing code
@@ -542,7 +553,241 @@ void test_cleanup_event_obj(CuTest *tc)
 
 void test_event_proces(CuTest *tc)
 {
-	//void event_process_local(const unsigned long current_pulse, struct dg_queue * queue)
+	// setup environment
+	//void queue_deq(struct dg_queue *q, struct q_element *qe)
+	struct dg_queue * event_q;
+	unsigned long current_pulse = 0;
+	void *event_obj = NULL;
+	long when = 1;
+	struct event *new_event_1;
+
+	// create the queue
+	event_q = queue_init();
+
+
+	// Allocate memory for the event object
+	CREATE(new_event_1, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_1 object.", new_event_1);
+	new_event_1->func = simple_func;
+	new_event_1->event_obj = event_obj;
+	new_event_1->isMudEvent = FALSE;
+
+	// Allocate memory for the event object
+	struct event *new_event_2;
+	CREATE(new_event_2, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_2 object.", new_event_2);
+	// It must be executed 3 times
+	new_event_2->func = simple_func;
+	new_event_2->event_obj = event_obj;
+	new_event_2->isMudEvent = FALSE;
+
+	// Allocate memory for the event object
+	struct event *new_event_3;
+	CREATE(new_event_3, struct event, 1);
+	CuAssertPtrNotNullMsg(tc, "Error to allocate memory to a new_event_3 object.", new_event_3);
+	new_event_3->func = test_countdown_func;
+	new_event_3->event_obj = event_obj;
+	new_event_3->isMudEvent = FALSE;
+
+
+	// Enqueue
+	new_event_1->q_el = queue_enq(event_q, new_event_1, when + current_pulse);
+
+	when = when + 50;
+	new_event_2->q_el = queue_enq(event_q, new_event_2, when + current_pulse);
+
+	when = when - 20; // it must fit in middle of two previous elements
+	new_event_3->q_el = queue_enq(event_q, new_event_3, when + current_pulse);
+
+	// Check if it was allocated
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_1) not pointing to a valid queue bucket", new_event_1->q_el);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_2) not pointing to a valid queue bucket", new_event_2->q_el);
+	CuAssertPtrNotNullMsg(tc, "Event (new_event_3) not pointing to a valid queue bucket", new_event_3->q_el);
+	
+	/* 
+	* Actual test code goes here
+	*/
+	current_pulse = 0;
+
+	/*
+	* PRE
+	* new_event_1 -> key/time = 1
+	* new_event_3 -> key/time = 31
+	* new_event_2 -> key/time = 51
+	*
+	* current_pulse = 0
+	*
+	* Expected
+	*
+	* new_event_1 -> key/time = 1
+	* new_event_3 -> key/time = 31
+	* new_event_2 -> key/time = 51
+	*
+	*/
+	// Check PRE conditions
+	CuAssertLongEquals_Msg(tc, "Setup Error: Event (new_event_1) must have the key = 1 before the test",  1, new_event_1->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Setup Error: Event (new_event_2) must have the key = 51 before the test", 31, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Setup Error: Event (new_event_3) must have the key = 31 before the test", 51, new_event_2->q_el->key);
+
+	event_process_local(current_pulse, event_q);
+
+	// Check Post conditions
+	CuAssertLongEquals_Msg(tc, "Event (new_event_1) must have the key = 1 before the test", 1, new_event_1->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 51 before the test", 31, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 31 before the test", 51, new_event_2->q_el->key);
+
+	/*
+	* PRE
+	* new_event_1 -> key/time = 1
+	* new_event_3 -> key/time = 31
+	* new_event_2 -> key/time = 51
+	*
+	* current_pulse = 1
+	*
+	* Expected
+	*
+	* new_event_1 -> key/time = 0 -- removed
+	* new_event_3 -> key/time = 31
+	* new_event_2 -> key/time = 51
+	*
+	*/
+	// Check PRE conditions
+	CuAssertLongEquals_Msg(tc, "Event (new_event_1) must have the key = 1  before the test", 1, new_event_1->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 51 before the test", 31, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 31 before the test", 51, new_event_2->q_el->key);
+	
+	current_pulse = 1;
+	event_process_local(current_pulse, event_q);
+
+	// Check Post conditions (New event 1 will be dangling - memory freed) Check queue head positions instead
+	CuAssertPtrEquals_Msg(tc, "", new_event_3->q_el, event_q->head[1]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 31, event_q->head[1]->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 51 after processing", 31, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 31 after processing", 51, new_event_2->q_el->key);
+
+
+	/*
+	* PRE
+	* new_event_3 -> key/time = 31
+	* new_event_2 -> key/time = 51
+	*
+	* current_pulse = 31
+	*
+	* Expected
+	*
+	* new_event_3 -> key/time = 33 (event function will return 2)
+	* new_event_2 -> key/time = 51
+	*
+	*/
+	// Check PRE conditions
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 51 before the test", 31, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 31 before the test", 51, new_event_2->q_el->key);
+
+	current_pulse = 31;
+	event_process_local(current_pulse, event_q);
+
+	// new_event_3 still on head, with current_pulse +2 time/key. The event will be put in the next bucket (33%10) = 3
+	CuAssertPtrEquals_Msg(tc, "", new_event_3->q_el, event_q->head[3]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 33, event_q->head[3]->key);
+
+	CuAssertPtrEquals_Msg(tc, "", new_event_2->q_el, event_q->head[1]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 51, event_q->head[1]->key);
+
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 32 after processing", 33, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 51 after processing", 51, new_event_2->q_el->key);
+
+
+	/**
+	* Note: We cannot skip a pulse, otherwise the event will be dealth only 10 
+	* pulses after (1 sec after usually)
+	*/
+
+
+	/*
+	* PRE
+	* new_event_3 -> key/time = 33
+	* new_event_2 -> key/time = 51
+	*
+	* current_pulse = 34 -- Skip 2 pulses
+	*
+	* Expected
+	*
+	* new_event_3 -> key/time = 33 -- Skiped, will be dealt only on pulse 43
+	* new_event_2 -> key/time = 51
+	*
+	*/
+	// Check PRE conditions
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 33 before the test", 33, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 51 before the test", 51, new_event_2->q_el->key);
+
+	current_pulse = 34;
+	event_process_local(current_pulse, event_q);
+
+	// Same state as previous test
+	CuAssertPtrEquals_Msg(tc, "", new_event_3->q_el, event_q->head[3]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 33, event_q->head[3]->key);
+
+	CuAssertPtrEquals_Msg(tc, "", new_event_2->q_el, event_q->head[1]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 51, event_q->head[1]->key);
+
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 33 after processing", 33, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 51 after processing", 51, new_event_2->q_el->key);
+	
+
+
+	/*
+	* PRE
+	* new_event_3 -> key/time = 33
+	* new_event_2 -> key/time = 51
+	*
+	* current_pulse = 43 -- 9 pulses later
+	*
+	* Expected
+	*
+	* new_event_3 -> key/time = 44 -- the function will return 1 and the event enqueued again
+	* new_event_2 -> key/time = 51
+	*
+	*/
+
+	current_pulse = 43;
+	event_process_local(current_pulse, event_q);
+
+	// Same state as previous test
+	CuAssertPtrEquals_Msg(tc, "", new_event_3->q_el, event_q->head[4]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 44, event_q->head[4]->key);
+
+	CuAssertPtrEquals_Msg(tc, "", new_event_2->q_el, event_q->head[1]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 51, event_q->head[1]->key);
+
+	CuAssertLongEquals_Msg(tc, "Event (new_event_2) must have the key = 43 after processing", 44, new_event_3->q_el->key);
+	CuAssertLongEquals_Msg(tc, "Event (new_event_3) must have the key = 51 after processing", 51, new_event_2->q_el->key);
+
+	// Execute the new_event_3 last time
+	current_pulse = 44;
+	event_process_local(current_pulse, event_q);
+
+	for (int i = 0; i < 10; i++)
+	{
+		if (i != 1) {
+			CuAssertPtrEquals_Msg(tc, "Bucket must be null! ", NULL, event_q->head[i]);
+		}
+	}
+	
+	CuAssertPtrEquals_Msg(tc, "event_q pointing to wrong element", new_event_2->q_el, event_q->head[1]);
+	CuAssertLongEquals_Msg(tc, "event_q pointing to wrong element.", 51, event_q->head[1]->key);
+
+	// Execute the new_event_3 last time
+	current_pulse = 51;
+	event_process_local(current_pulse, event_q);
+	
+	CuAssertPtrEquals_Msg(tc, "event_q pointing to wrong element", NULL, event_q->head[1]);
+
+	/**
+	* Clean resources
+	*/
+
+	queue_free_2(&event_q);
+
 }
 
 void test_event_time(CuTest *tc)

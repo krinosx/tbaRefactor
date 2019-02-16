@@ -54,7 +54,7 @@ struct dg_queue {
 /** Queued elements. */
 struct q_element {
   void *data;  /**< The event to be handled. */
-  long key;    /**< When the event should be handled. */
+  unsigned long key;    /**< When the event should be handled. */
   struct q_element *prev, *next; /**< Points to other q_elements in line. */
 };
 /**************************************************************************
@@ -66,7 +66,7 @@ void event_init(void);
 struct event *event_create(EVENTFUNC(*func), void *event_obj, long when);
 void event_cancel(struct event *event);
 void event_process(void);
-long event_time(struct event *event);
+unsigned long event_time(struct event *event);
 void event_free_all(void);
 void cleanup_event_obj(struct event *event);
 
@@ -74,11 +74,11 @@ void cleanup_event_obj(struct event *event);
 
 /* - queues - function protos NOT need by other modules, it must be an INTERNAL METHODS */
 struct dg_queue *queue_init(void);
-struct q_element *queue_enq(struct dg_queue *q, void *data, long key);
+struct q_element *queue_enq(struct dg_queue *q, void *data, unsigned long key);
 void queue_deq(struct dg_queue *q, struct q_element *qe);
 void *queue_head(struct dg_queue *q);
-long queue_key(struct dg_queue *q);
-long queue_elmt_key(struct q_element *qe);
+unsigned long queue_key(struct dg_queue *q);
+unsigned long queue_elmt_key(struct q_element *qe);
 void queue_free(struct dg_queue *q);
 int  event_is_queued(struct event *event);
 

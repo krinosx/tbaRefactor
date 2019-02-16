@@ -34,6 +34,9 @@
 static struct dg_queue *event_q;
 
 
+// Prototype
+void *queue_head_local(struct dg_queue *q, unsigned long current_pulse);
+
 /** Initializes the main event queue event_q.
  * @post The main event queue, event_q, has been created and initialized.
  */
@@ -137,7 +140,7 @@ void cleanup_event_obj(struct event *event)
 /** 
 * Refactores to allow unit testing. Removing use of global parameters
  */
-void event_process_local(const unsigned long current_pulse, struct dg_queue * queue)
+void event_process_local(unsigned long current_pulse, struct dg_queue * queue)
 {
   struct event *the_event;
   long new_time;
@@ -146,10 +149,10 @@ void event_process_local(const unsigned long current_pulse, struct dg_queue * qu
   * If the head element of current bucket should have been executed 
   * in the past or now...
   */
-  while ((long)current_pulse >= queue_key(queue)) {
+  while (current_pulse >= queue_key_local(queue, current_pulse)) {
 	// Check if its an valid event and retrieve it from 
 	// the queue (remove it from queue also)
-    if (!(the_event = (struct event *) queue_head(queue))) {
+    if (!(the_event = (struct event *) queue_head_local(queue, current_pulse))) {
       log("SYSERR: Attempt to get a NULL event");
       return;
     }
@@ -187,7 +190,7 @@ void event_process(void) {
 /** Refactored in order to remove global variables reference
 * and enable unit testing.
 */
-long event_time_local(struct event *event, unsigned long pulse)
+unsigned long event_time_local(struct event *event, unsigned long pulse)
 {
 	long when;
 
@@ -199,7 +202,7 @@ long event_time_local(struct event *event, unsigned long pulse)
 /** Returns the time remaining before the event as how many pulses from now. 
  * @param event Check this event for its scheduled activation time.
  * @retval long Number of pulses before this event will fire. */
-long event_time(struct event *event)
+unsigned long event_time(struct event *event)
 {
 	return event_time_local(event, pulse);
 }
@@ -251,7 +254,7 @@ struct dg_queue *queue_init(void)
  * when the element should be activated.
  * @retval q_element Pointer to the created q_element that contains
  * the data. */
-struct q_element *queue_enq(struct dg_queue *q, void *data, long key)
+struct q_element *queue_enq(struct dg_queue *q, void *data, unsigned long key)
 {
   struct q_element *qe, *i;
   int bucket;
@@ -367,7 +370,7 @@ void *queue_head_local(struct dg_queue *q, unsigned long current_pulse)
  * @param q The queue to return the head of.
  * @retval void * NULL if there is not a currently available head, pointer
  * to any data object associated with the queue element. */
-void *queue_head(struct dg_queue *q) {
+void * queue_head(struct dg_queue *q ) {
 	return queue_head_local(q, pulse);
 }
 
@@ -375,7 +378,7 @@ void *queue_head(struct dg_queue *q) {
 /**
 * Refactored version. Used to unity testing. Use the default version 'queue_key'
 */
-long queue_key_local(struct dg_queue *q, unsigned long p)
+unsigned long queue_key_local(struct dg_queue *q, unsigned long p)
 {
 	int i;
 
@@ -398,7 +401,7 @@ long queue_key_local(struct dg_queue *q, unsigned long p)
  * @param q Queue to check for.
  * @retval long Return the key element of the head q_element. If no head
  * q_element is available, return LONG_MAX. */
-long queue_key(struct dg_queue *q)
+unsigned long queue_key(struct dg_queue *q)
 {
 	return queue_key_local(q, pulse);
 }
@@ -406,7 +409,7 @@ long queue_key(struct dg_queue *q)
 /** Returns the key of queue element qe.
  * @param qe Pointer to the keyed q_element.
  * @retval long Key of qe. */
-long queue_elmt_key(struct q_element *qe)
+unsigned long queue_elmt_key(struct q_element *qe)
 {
   return qe->key;
 }
