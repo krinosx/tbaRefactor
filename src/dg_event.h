@@ -77,7 +77,7 @@ struct dg_queue *queue_init(void);
 struct q_element *queue_enq(struct dg_queue *q, void *data, unsigned long key);
 void queue_deq(struct dg_queue *q, struct q_element *qe);
 void *queue_head(struct dg_queue *q);
-unsigned long queue_key(struct dg_queue *q);
+unsigned long queue_key_local(struct dg_queue *q, unsigned long pulse);
 unsigned long queue_elmt_key(struct q_element *qe);
 void queue_free(struct dg_queue *q);
 int  event_is_queued(struct event *event);

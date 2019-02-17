@@ -408,7 +408,7 @@ int main(int argc, char **argv)
 
   if (cmdData->logFileName != NULL)
   {
-	  CONFIG_LOGNAME = cmdData->logFileName;
+	  CONFIG_LOGNAME = strdup(cmdData->logFileName);
   }
   if (cmdData->dataFolder != NULL)
   {
@@ -2699,7 +2699,7 @@ char *act(const char *str, int hide_invisible, struct char_data *ch,
   for (; to; to = to->next_in_room) {
     if (!SENDOK(to) || (to == ch))
       continue;
-    if (hide_invisible && ch && !CAN_SEE(to, ch))
+    if (hide_invisible && ch && to && !CAN_SEE(to, ch)) //BUG SHUTDOWN: Exception thrown: read access violation. to->desc was 0xDDDDDDDD.
       continue;
     if (type != TO_ROOM && to == vict_obj)
       continue;
