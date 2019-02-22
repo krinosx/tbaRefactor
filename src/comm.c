@@ -377,10 +377,10 @@ int main(int argc, char **argv)
   */
   CONFIG_CONFFILE = NULL;
   if (cmdData->configFileName == NULL) {
-	  CONFIG_CONFFILE = CONFIG_FILE;
+	  CONFIG_CONFFILE = strdup(CONFIG_FILE);
   }
   else {
-	  CONFIG_CONFFILE = cmdData->configFileName;
+	  CONFIG_CONFFILE = strdup(cmdData->configFileName);
   }
 
   if (CONFIG_CONFFILE == NULL)  {
@@ -627,7 +627,7 @@ static void init_game(ush_int local_port)
   /* Init event_queue structure */
   event_init();
 
-  /* set up hash table for find_char() */
+  /* set up hash table for find_char() - TODO: Write unit tests */
   init_lookup_table();
 
   boot_db();
@@ -911,31 +911,31 @@ void game_loop(socket_t local_mother_desc)
         continue;
 
       if (d->character) {
-	/* Reset the idle timer & pull char back from void if necessary */
-	d->character->char_specials.timer = 0;
-	if (STATE(d) == CON_PLAYING && GET_WAS_IN(d->character) != NOWHERE) {
-	  if (IN_ROOM(d->character) != NOWHERE)
-	    char_from_room(d->character);
-	  char_to_room(d->character, GET_WAS_IN(d->character));
-	  GET_WAS_IN(d->character) = NOWHERE;
-	  act("$n has returned.", TRUE, d->character, 0, 0, TO_ROOM);
-	}
-        GET_WAIT_STATE(d->character) = 1;
+	        /* Reset the idle timer & pull char back from void if necessary */
+	        d->character->char_specials.timer = 0;
+	        if (STATE(d) == CON_PLAYING && GET_WAS_IN(d->character) != NOWHERE) {
+	          if (IN_ROOM(d->character) != NOWHERE) 
+	            char_from_room(d->character);
+	          char_to_room(d->character, GET_WAS_IN(d->character));
+	          GET_WAS_IN(d->character) = NOWHERE;
+	          act("$n has returned.", TRUE, d->character, 0, 0, TO_ROOM);
+	        }
+            GET_WAIT_STATE(d->character) = 1;
       }
       d->has_prompt = FALSE;
 
       if (d->showstr_count) /* Reading something w/ pager */
-	show_string(d, comm);
+          show_string(d, comm);
       else if (d->str)		/* Writing boards, mail, etc. */
-	string_add(d, comm);
+          string_add(d, comm);
       else if (STATE(d) != CON_PLAYING) /* In menus, etc. */
-	nanny(d, comm);
+          nanny(d, comm);
       else {			/* else: we're playing normally. */
-	if (aliased)		/* To prevent recursive aliases. */
-	  d->has_prompt = TRUE;	/* To get newline before next cmd output. */
-	else if (perform_alias(d, comm, sizeof(comm)))    /* Run it through aliasing system */
-	  get_from_q(&d->input, comm, &aliased);
-	command_interpreter(d->character, comm); /* Send it to interpreter */
+	    if (aliased)		/* To prevent recursive aliases. */
+	      d->has_prompt = TRUE;	/* To get newline before next cmd output. */
+	    else if (perform_alias(d, comm, sizeof(comm)))    /* Run it through aliasing system */
+	      get_from_q(&d->input, comm, &aliased);
+	    command_interpreter(d->character, comm); /* Send it to interpreter */
       }
     }
 
@@ -2211,34 +2211,6 @@ void nonblock(socket_t s)
   ioctlsocket(s, FIONBIO, &val);
 }
 
-#elif defined(CIRCLE_AMIGA)
-
-void nonblock(socket_t s)
-{
-  long val = 1;
-  IoctlSocket(s, FIONBIO, &val);
-}
-
-#elif defined(CIRCLE_ACORN)
-
-void nonblock(socket_t s)
-{
-  int val = 1;
-  socket_ioctl(s, FIONBIO, &val);
-}
-
-#elif defined(CIRCLE_VMS)
-
-void nonblock(socket_t s)
-{
-  int val = 1;
-
-  if (ioctl(s, FIONBIO, &val) < 0) {
-    perror("SYSERR: Fatal error executing nonblock (comm.c)");
-    exit(1);
-  }
-}
-
 #elif defined(CIRCLE_UNIX) || defined(CIRCLE_OS2) || defined(CIRCLE_MACINTOSH)
 
 #ifndef O_NONBLOCK
@@ -2699,7 +2671,7 @@ char *act(const char *str, int hide_invisible, struct char_data *ch,
   for (; to; to = to->next_in_room) {
     if (!SENDOK(to) || (to == ch))
       continue;
-    if (hide_invisible && ch && to && !CAN_SEE(to, ch)) //BUG SHUTDOWN: Exception thrown: read access violation. to->desc was 0xDDDDDDDD.
+    if (hide_invisible && ch && ch->desc && to && to->desc && !CAN_SEE(to, ch)) //BUG SHUTDOWN: Exception thrown: read access violation. to->desc was 0xDDDDDDDD. - Tim Lifeguard
       continue;
     if (type != TO_ROOM && to == vict_obj)
       continue;

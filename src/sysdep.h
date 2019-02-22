@@ -286,16 +286,6 @@ struct in_addr {
 #  define FD_SETSIZE		1024
 # endif
 
-#elif defined(CIRCLE_VMS)
-
-/* Necessary Definitions For DEC C With DEC C Sockets Under OpenVMS. */
-# if defined(DECC)
-#  include <stdio.h>
-#  include <time.h>
-#  include <stropts.h>
-#  include <unixio.h>
-# endif
-
 #elif !defined(CIRCLE_MACINTOSH) && !defined(CIRCLE_UNIX) && !defined(CIRCLE_ACORN)
 # error "You forgot to include conf.h or do not have a valid system define."
 #endif
